@@ -3,30 +3,36 @@
 
 #include "gameobject.h"
 
-#include <unordered_map>
+#include <map>
 #include <vector>
 
-class Level{
+struct Position
+{
+    unsigned x;
+    unsigned y;
+};
 
-    std::unordered_multimap<Position, GameObject> map;
-    std::unordered_multimap<ObjectType, ObjectType>rules;
-    unsigned width;
-    unsigned height;
-    bool isWon;
+class Level
+{
+    // TODO : remettre une unordered_multimap
+    std::multimap<Position, GameObject> map;
+    std::multimap<ObjectType, ObjectType> rules;
+    unsigned width {0};
+    unsigned height {0};
+    bool isWon {false};
 
-    public:
-    Level(std::string);
-
-    void movePlayer(Direction);
-    std::string getState();
-    bool Won();
-
-    private:
     std::vector<ObjectType> getPlayerObject();
     std::vector<std::pair<Position, GameObject>> getAllOfType(ObjectType);
     bool canMove(Position,Direction);
     void buildRules();
     void applyRules();
+
+public:
+    Level(std::string);
+
+    void movePlayer(Direction);
+    std::string getState();
+    bool won();
 };
 
 
