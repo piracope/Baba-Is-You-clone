@@ -1,10 +1,10 @@
 #ifndef BABA_H
 #define BABA_H
 
-#include <ostream>
+#include <string>
 
 class Baba{
-    unsigned lvlNumber;
+    unsigned lvlNumber_;
     void createLevel(unsigned);
 
 public:

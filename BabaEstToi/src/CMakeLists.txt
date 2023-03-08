@@ -6,7 +6,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_executable(BabaEstToi
     main.cpp
     model/enum.h
+    model/enum.cpp
     model/gameobject.h
+    model/gameobject.cpp
     model/baba.h
     model/baba.cpp
     model/level.h
