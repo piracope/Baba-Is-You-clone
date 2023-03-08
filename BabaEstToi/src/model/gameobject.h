@@ -9,8 +9,8 @@ class GameObject{
     Direction dir_;
 
 public:
-    GameObject() = default; // racisme
     inline GameObject(ObjectType, Categorie, Direction);
+    inline GameObject(ObjectType, Direction); //i'm trying out stuff
     inline Categorie getCategorie() const;
     inline ObjectType getType() const;
     inline Direction getDirection() const;
@@ -26,6 +26,14 @@ inline std::ostream & operator<<(std::ostream & out, GameObject & obj);
 GameObject::GameObject(ObjectType type, Categorie cat, Direction dir)
     : cat_{cat}, type_{type}, dir_{dir}
 {}
+
+GameObject::GameObject(ObjectType type, Direction dir = Direction::RIGHT)
+    : type_ {type}, dir_ {dir}
+{
+    if(type < ObjectType::TEXT_ROCK) cat_ = Categorie::ELEM;
+    else if(type < ObjectType::KILL) cat_ = Categorie::TEXT;
+    else cat_ = Categorie::ASPECT;
+}
 
 Categorie GameObject::getCategorie() const {
     return cat_;

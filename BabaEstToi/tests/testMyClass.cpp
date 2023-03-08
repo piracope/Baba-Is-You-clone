@@ -1,3 +1,4 @@
+/*
 #include <catch2/catch_test_macros.hpp>
 #include "MyClass.h"
 
@@ -11,3 +12,4 @@ TEST_CASE( "Test of MyClass") {
         REQUIRE_FALSE(myClass.sum(2,2) == 5);
     }
 }
+*/

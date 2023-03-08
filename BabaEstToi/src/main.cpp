@@ -1,14 +1,11 @@
 #include <iostream>
-#include "../BabaEstToi/model/gameobject.h"
-#include "../BabaEstToi/model/text.h"
-
+#include "model/level.h"
 using namespace std;
 
 int main()
 {
-    GameObject truc{ObjectType::BABA,Categorie::ELEM,0};
-    cout << truc << endl;
-    Text foo{ObjectType::TEXT_WALL,Categorie::ELEM,0};
-    cout << foo << endl;
+    Level l {"18 24\nTEXT_WALL 14 14\nBABA 6 8 2"};
+
+    cout << l.getDimensions().x << " " << l.getDimensions().y << endl;
     return 0;
 }
