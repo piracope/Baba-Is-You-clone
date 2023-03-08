@@ -1,11 +1,9 @@
 #include <iostream>
-#include "model/level.h"
+#include "model/filemanager.h"
 using namespace std;
 
 int main()
 {
-    model::Level l {"18 24\nTEXT_WALL 14 14\nBABA 6 8 2"};
-
-    cout << l.getDimensions().x << " " << l.getDimensions().y << endl;
+    std::cout << FileManager::getLevel(0);
     return 0;
 }

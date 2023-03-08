@@ -101,6 +101,20 @@ std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type
 
 // GETTERS
 
+std::string Level::getState() const
+{
+    std::ostringstream ret {};
+    ret << width_ << ' ' << height_ << std::endl;
+    for (const auto& [pos, obj] : gamemap_)
+    {
+        ret << obj << ' ' << pos.x << ' ' << pos.y;
+        if (obj.getDirection() != Direction::RIGHT) ret << ' ' << obj.getDirection();
+        ret << std::endl;
+    }
+
+    return ret.str();
+}
+
 bool Level::isWon() const
 {
     return isWon_;

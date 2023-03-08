@@ -1,7 +1,14 @@
 #include "baba.h"
+#include "filemanager.h"
 
 namespace model
 {
+
+void Baba::createLevel(unsigned nb)
+{
+    lvl_ = FileManager::getLevel(nb);
+    lvlNumber_ = nb;
+}
 
 // GETTERS
 

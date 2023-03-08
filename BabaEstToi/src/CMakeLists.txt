@@ -13,6 +13,8 @@ add_executable(BabaEstToi
     model/baba.cpp
     model/level.h
     model/level.cpp
+    model/filemanager.h
+    model/filemanager.cpp
     observer/observer.h
     observer/subject.h
     observer/subject.cpp
