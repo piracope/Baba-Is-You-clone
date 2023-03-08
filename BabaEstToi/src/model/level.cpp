@@ -82,6 +82,17 @@ std::unordered_set<ObjectType> Level::getPlayerObjects() const
     return ret;
 }
 
+std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type) const
+{
+    std::vector<std::pair<Position, GameObject>> ret {};
+    for (const auto &p : gamemap_)
+    {
+        if(p.second.getType() == type) ret.push_back(p);
+    }
+
+    return ret;
+}
+
 bool Level::isWon() const
 {
     return isWon_;
