@@ -1,6 +1,10 @@
 #include "gameobject.h"
 
-namespace model {
+namespace model
+{
+
+// CONSTRUCTORS
+
 GameObject::GameObject(ObjectType type, Categorie cat, Direction dir)
     : cat_{cat}, type_{type}, dir_{dir}
 {}
@@ -13,15 +17,19 @@ GameObject::GameObject(ObjectType type, Direction dir)
     else cat_ = Categorie::ASPECT;
 }
 
-// getters & setters
+// GETTERS & SETTERS
+
 Categorie GameObject::getCategorie() const { return cat_; }
 ObjectType GameObject::getType() const { return type_; }
 Direction GameObject::getDirection() const { return dir_; }
 
 void GameObject::setDirection(Direction dir){ dir_ = dir; }
 
+// STRING MANIPULATION
+
 std::ostream & operator<<(std::ostream & out, const GameObject & obj)
 {
     return out << obj.getType();
 }
+
 }

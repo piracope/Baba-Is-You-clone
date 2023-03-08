@@ -4,7 +4,9 @@
 
 #include "level.h"
 
-namespace model {
+namespace model
+{
+
 // POSITION
 
 bool Position::operator<(const Position& other) const
@@ -37,6 +39,8 @@ std::unordered_map<std::string, ObjectType> strtotype
     {"SINK", ObjectType::SINK},
     {"YOU", ObjectType::YOU}
 };
+
+// CONSTRUCTOR
 
 Level::Level(std::string lvl)
 {
@@ -71,6 +75,8 @@ Level::Level(std::string lvl)
 
 }
 
+// HELPER METHODS
+
 std::unordered_set<ObjectType> Level::getPlayerObjects() const
 {
     std::unordered_set<ObjectType> ret {};
@@ -92,6 +98,8 @@ std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type
 
     return ret;
 }
+
+// GETTERS
 
 bool Level::isWon() const
 {

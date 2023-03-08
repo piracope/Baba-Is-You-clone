@@ -3,14 +3,17 @@
 
 #include <ostream>
 
-namespace model {
-enum class Categorie{
+namespace model
+{
+enum class Categorie
+{
     ELEM,
     TEXT,
     ASPECT
 };
 
-enum class ObjectType{
+enum class ObjectType
+{
     ROCK,
     WALL,
     FLAG,
@@ -33,7 +36,8 @@ enum class ObjectType{
     YOU
 };
 
-enum class Direction{
+enum class Direction
+{
     UP,
     DOWN,
     LEFT,
@@ -46,5 +50,6 @@ std::string to_string(ObjectType);
 std::ostream & operator<<(std::ostream&, Categorie);
 std::ostream & operator<<(std::ostream&, ObjectType);
 std::ostream & operator<<(std::ostream&, Direction);
+
 }
 #endif // ENUM_H

@@ -3,8 +3,11 @@
 
 #include "enum.h"
 
-namespace model {
-class GameObject{
+namespace model
+{
+
+class GameObject
+{
     Categorie cat_;
     ObjectType type_;
     Direction dir_;
@@ -21,5 +24,6 @@ public:
 // string manipulation
 
 std::ostream & operator<<(std::ostream&, const GameObject&);
+
 }
 #endif // GAMEOBJECT_H

@@ -3,19 +3,27 @@
 
 #include <string>
 
-namespace model {
-class Baba{
+#include "level.h"
+
+namespace model
+{
+
+class Baba
+{
     unsigned lvlNumber_;
+    Level lvl_;
     void createLevel(unsigned);
 
 public:
     Baba();
     void restart();
-    void save();
+    void save() const;
     void load();
     void move();
-    std::string getState();
+    std::string getState() const;
+    Position getDimensions() const;
 };
+
 }
 
 #endif // BABA_H

@@ -2,7 +2,8 @@
 
 #include "enum.h"
 
-namespace model {
+namespace model
+{
 
 std::string to_string(Categorie cat)
 {
