@@ -3,6 +3,7 @@
 
 #include <ostream>
 
+namespace model {
 enum class Categorie{
     ELEM,
     TEXT,
@@ -45,4 +46,5 @@ std::string to_string(ObjectType);
 std::ostream & operator<<(std::ostream&, Categorie);
 std::ostream & operator<<(std::ostream&, ObjectType);
 std::ostream & operator<<(std::ostream&, Direction);
+}
 #endif // ENUM_H

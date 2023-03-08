@@ -3,6 +3,7 @@
 
 #include <string>
 
+namespace model {
 class Baba{
     unsigned lvlNumber_;
     void createLevel(unsigned);
@@ -15,5 +16,6 @@ public:
     void move();
     std::string getState();
 };
+}
 
 #endif // BABA_H

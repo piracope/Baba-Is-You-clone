@@ -2,6 +2,8 @@
 
 #include "enum.h"
 
+namespace model {
+
 std::string to_string(Categorie cat)
 {
     switch (cat) {
@@ -91,4 +93,6 @@ std::ostream & operator<<(std::ostream & out, Direction dir)
         out << 3;
     }
     return out;
+}
+
 }

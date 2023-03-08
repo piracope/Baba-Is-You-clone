@@ -4,6 +4,7 @@
 
 #include "level.h"
 
+namespace model {
 // POSITION
 
 bool Position::operator<(const Position& other) const
@@ -56,7 +57,7 @@ Level::Level(std::string lvl)
 
         std::string tmp2;
         std::getline(line, tmp2, ' ');
-        auto type {strtotype.at(tmp2)}; // first word -> type
+        const ObjectType type { strtotype.at(tmp2) }; // first word -> type
 
         std::getline(line, tmp2, ' ');
         unsigned x = std::stoi(tmp2); // second word -> pos.x
@@ -65,7 +66,6 @@ Level::Level(std::string lvl)
         unsigned y = std::stoi(tmp2); // third word -> pos.y
 
         // TODO : direction
-
         gamemap_.insert({{x, y}, type}); // we add a GameObject (implicit constr) at (x, y)
     }
 
@@ -79,4 +79,6 @@ bool Level::isWon() const
 Position Level::getDimensions() const
 {
     return Position {width_, height_};
+}
+
 }

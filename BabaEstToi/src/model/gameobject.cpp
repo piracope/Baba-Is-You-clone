@@ -1,10 +1,11 @@
 #include "gameobject.h"
 
+namespace model {
 GameObject::GameObject(ObjectType type, Categorie cat, Direction dir)
     : cat_{cat}, type_{type}, dir_{dir}
 {}
 
-GameObject::GameObject(ObjectType type, Direction dir = Direction::RIGHT)
+GameObject::GameObject(ObjectType type, Direction dir)
     : type_ {type}, dir_ {dir}
 {
     if(type < ObjectType::TEXT_ROCK) cat_ = Categorie::ELEM;
@@ -22,4 +23,5 @@ void GameObject::setDirection(Direction dir){ dir_ = dir; }
 std::ostream & operator<<(std::ostream & out, const GameObject & obj)
 {
     return out << obj.getType();
+}
 }

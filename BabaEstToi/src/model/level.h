@@ -6,6 +6,7 @@
 
 #include "gameobject.h"
 
+namespace model {
 struct Position
 {
     unsigned x;
@@ -37,6 +38,6 @@ public:
     bool isWon() const;
     Position getDimensions() const;
 };
-
+}
 
 #endif // LEVEL_H
