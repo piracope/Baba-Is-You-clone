@@ -71,6 +71,17 @@ Level::Level(std::string lvl)
 
 }
 
+std::unordered_set<ObjectType> Level::getPlayerObjects() const
+{
+    std::unordered_set<ObjectType> ret {};
+    for (const auto& [type, asp] : rules_)
+    {
+        if(asp == ObjectType::YOU) ret.insert(type);
+    }
+
+    return ret;
+}
+
 bool Level::isWon() const
 {
     return isWon_;

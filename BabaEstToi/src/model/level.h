@@ -3,6 +3,7 @@
 
 #include <map>
 #include <vector>
+#include <unordered_set>
 
 #include "gameobject.h"
 
@@ -24,7 +25,7 @@ class Level
     unsigned height_ {0};
     bool isWon_ {false};
 
-    std::vector<ObjectType> getPlayerObjects() const;
+    std::unordered_set<ObjectType> getPlayerObjects() const;
     std::vector<std::pair<Position, GameObject>> getAllOfType(ObjectType) const;
     bool canMove(Position,Direction);
     void buildRules();
