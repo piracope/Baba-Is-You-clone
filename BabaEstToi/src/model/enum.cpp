@@ -36,6 +36,8 @@ std::string to_string(ObjectType type)
         return "WATER";
     case ObjectType::BABA:
         return "BABA";
+    case ObjectType::IS:
+        return "IS";
     case ObjectType::TEXT_ROCK:
         return "TEXT_ROCK";
     case ObjectType::TEXT_WALL:

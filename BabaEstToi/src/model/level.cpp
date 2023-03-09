@@ -25,6 +25,7 @@ std::unordered_map<std::string, ObjectType> strtotype
     {"GRASS", ObjectType::GRASS},
     {"WATER", ObjectType::WATER},
     {"BABA", ObjectType::BABA},
+    {"IS", ObjectType::IS},
     {"TEXT_ROCK", ObjectType::TEXT_ROCK},
     {"TEXT_WALL", ObjectType::TEXT_WALL},
     {"TEXT_FLAG", ObjectType::TEXT_FLAG},
@@ -115,14 +116,8 @@ std::string Level::getState() const
     return ret.str();
 }
 
-bool Level::isWon() const
-{
-    return isWon_;
-}
+bool Level::isWon() const { return isWon_; }
 
-Position Level::getDimensions() const
-{
-    return Position {width_, height_};
-}
+Position Level::getDimensions() const { return Position {width_, height_}; }
 
 }

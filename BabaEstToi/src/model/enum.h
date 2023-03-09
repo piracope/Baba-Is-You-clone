@@ -21,6 +21,7 @@ enum class ObjectType
     GRASS,
     WATER,
     BABA,
+    IS,
     TEXT_ROCK,
     TEXT_WALL,
     TEXT_FLAG,
