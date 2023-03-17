@@ -18,9 +18,9 @@ class Baba
 public:
     Baba();
     void restart();
-    void save() const;
-    void load();
-    void move();
+    void save() const; // FIXME : gérer le n° de niveau
+    void load(); // TODO
+    void move(Direction); // TODO
     std::string getState() const;
     Position getDimensions() const;
 };

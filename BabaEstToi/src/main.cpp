@@ -1,11 +1,12 @@
 #include <iostream>
-#include "model/filemanager.h"
-#include "model/level.h"
+#include "model/baba.h"
 using namespace std;
 
 int main()
 {
-    model::Level l {FileManager::getLevel(0)};
-    std::cout << l.getState();
+    model::Baba baba;
+    std::cout << baba.getState();
+
+    baba.save();
     return 0;
 }

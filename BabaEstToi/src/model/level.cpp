@@ -1,6 +1,7 @@
 #include <string>
 #include <sstream>
 #include <unordered_map>
+#include <stdexcept>
 
 #include "level.h"
 
@@ -12,6 +13,23 @@ namespace model
 bool Position::operator<(const Position& other) const
 {
     return x < other.x || x == other.x && y < other.y;
+}
+
+Position operator+(const Position& pos, const Direction dir)
+{
+    static std::unordered_map<Direction, Position> dirToVector
+    {
+        {Direction::DOWN, {0, 1} },
+        {Direction::LEFT, {-1, 0}},
+        {Direction::RIGHT, {1, 0}},
+        {Direction::UP, {0, -1}}
+    };
+
+    return {pos.x + dirToVector.at(dir).x, pos.y + dirToVector.at(dir).y};
+}
+Position operator+(const Direction dir, const Position& pos)
+{
+    return pos + dir;
 }
 
 // USEFUL MAPS
@@ -65,10 +83,10 @@ Level::Level(std::string lvl)
         const ObjectType type { strtotype.at(tmp2) }; // first word -> type
 
         std::getline(line, tmp2, ' ');
-        unsigned x = std::stoi(tmp2); // second word -> pos.x
+        int x {std::stoi(tmp2)}; // second word -> pos.x
 
         std::getline(line, tmp2, ' ');
-        unsigned y = std::stoi(tmp2); // third word -> pos.y
+        int y {std::stoi(tmp2)}; // third word -> pos.y
 
         // TODO : direction
         gamemap_.insert({{x, y}, type}); // we add a GameObject (implicit constr) at (x, y)
@@ -98,6 +116,13 @@ std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type
     }
 
     return ret;
+}
+
+// MOVEMENT
+
+void Level::movePlayer(Direction dir) {
+    if(isWon_) throw std::logic_error {"Cannot move when game is won."};
+    // TODO : tout le reste
 }
 
 // GETTERS
