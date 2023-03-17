@@ -94,6 +94,8 @@ Level::Level(std::string lvl)
 
     // TODO : enlever ça
     rules_.insert({ObjectType::BABA, ObjectType::YOU});
+    //rules_.insert({ObjectType::WALL, ObjectType::STOP});
+    rules_.insert({ObjectType::ROCK, ObjectType::PUSH});
 
     //buildRules();
     //applyRules();
@@ -127,8 +129,61 @@ std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type
 
 // MOVEMENT
 
-bool Level::canMove(const Position, const Direction)
+bool Level::canMove(const Position pos, const Direction dir)
 {
+    /*
+        3. Pour chaque GameObject, on vérifie si le type de cet objet est concerné par une règle.
+            * Si aucun élément n'a de règle associée, le mouvement est permis
+            * Si sa catégorie est autre que ELEM, il sera d'office poussable. Le comportement est égal à celui défini plus bas.
+    */
+
+
+    // 1. Si pos + dir dépasse les limites de la map, elle retourne faux.
+    const Position final {pos + dir};
+    if(final.x < 0 || final.y < 0 || final.x >= width_ || final.y >= height_)
+        return false;
+
+    // 2. On récupère les GameObjects se trouvant à la position d'arrivée.
+    const auto its {gamemap_.equal_range(final)};
+
+    // 3. Pour chaque GameObject, on vérifie si le type de cet objet est concerné par une règle.
+
+    decltype(its.first) toPush {gamemap_.end()};
+
+    for (auto it {its.first}; it != its.second; ++it)
+    {
+        const auto rules {rules_.equal_range(it->second.getType())}; // on chope le type et ses regles
+        for (auto rule {rules.first}; rule != rules.second; ++rule)
+        {
+            // 4. En fonction de l'Aspect de la règle, plusieurs actions seront effectuées
+            auto asp {rule->second};
+            if(asp == ObjectType::STOP) return false; // STOP : le mouvement est refusé
+            if(asp == ObjectType::PUSH) toPush = it;
+        }
+    }
+
+    /* Si on arrive ici c'est que soit :
+     *  1. y a aucun élément à la position final
+     *  2. y a aucune règle sur les éléments
+     *  3. y a aucun STOP
+     */
+
+    // donc, si aucun PUSH non plus, c'est bon
+    if(toPush == gamemap_.end()) return true;
+
+    const auto objToPush {*toPush};
+
+    //sinon, je check s'il est pushable.
+    if(!canMove(final + dir, dir)) return false;
+    else
+    {
+        const auto its {gamemap_.equal_range(objToPush.first)};
+        auto it {its.first};
+        while (it != its.second && it->second != objToPush.second) ++it;
+        gamemap_.erase(it);
+
+        gamemap_.insert({objToPush.first + dir, objToPush.second});
+    }
     return true;
 }
 
@@ -156,7 +211,7 @@ void Level::movePlayer(const Direction dir)
         {
             const auto its {gamemap_.equal_range(obj.first)};
             auto it {its.first};
-            while (it != its.second && it->second != obj.second) ++it;
+            while (it != its.second && it->second != obj.second) ++it; // FIXME : bouger a la chaine bouge le premier et dernier seulement
             gamemap_.erase(it);
 
             gamemap_.insert({obj.first + dir, obj.second});
