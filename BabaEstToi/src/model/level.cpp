@@ -12,14 +12,14 @@ namespace model
 
 bool Position::operator<(const Position& other) const
 {
-    return x < other.x || x == other.x && y < other.y;
+    return y < other.y || y == other.y && x < other.x;
 }
 
 Position operator+(const Position& pos, const Direction dir)
 {
-    static std::unordered_map<Direction, Position> dirToVector
+    const static std::unordered_map<Direction, Position> dirToVector
     {
-        {Direction::DOWN, {0, 1} },
+        {Direction::DOWN, {0, 1}},
         {Direction::LEFT, {-1, 0}},
         {Direction::RIGHT, {1, 0}},
         {Direction::UP, {0, -1}}
@@ -34,7 +34,7 @@ Position operator+(const Direction dir, const Position& pos)
 
 // USEFUL MAPS
 
-std::unordered_map<std::string, ObjectType> strtotype
+std::unordered_map<std::string, ObjectType> strtotype // FIXME : le balancer ailleurs ou jsp
 {
     {"ROCK", ObjectType::ROCK},
     {"WALL", ObjectType::WALL},
@@ -92,7 +92,14 @@ Level::Level(std::string lvl)
         gamemap_.insert({{x, y}, type}); // we add a GameObject (implicit constr) at (x, y)
     }
 
+    // TODO : enlever ça
+    rules_.insert({ObjectType::BABA, ObjectType::YOU});
+
+    //buildRules();
+    //applyRules();
+
 }
+
 
 // HELPER METHODS
 
@@ -120,9 +127,47 @@ std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type
 
 // MOVEMENT
 
-void Level::movePlayer(Direction dir) {
+bool Level::canMove(const Position, const Direction)
+{
+    return true;
+}
+
+void Level::movePlayer(const Direction dir)
+{
     if(isWon_) throw std::logic_error {"Cannot move when game is won."};
-    // TODO : tout le reste
+
+    // 1. Récupérer les types d'éléments contrôlables par le joueur
+    const auto playertypes {getPlayerObjects()};
+
+    if(playertypes.empty()) return;
+
+    // 2. Pour chacun de ces types, récupérer les GameObjects de ce type
+    std::vector<std::pair<Position, GameObject>> playerobjects {};
+    for (const auto type : playertypes)
+    {
+        const auto obj {getAllOfType(type)};
+        playerobjects.insert(playerobjects.end(), obj.begin(), obj.end());
+    }
+
+    // 3. Pour chaque élément, tester si bouger le GameObject est possible, et si oui, le déplacer dans la map.
+    for (const auto& obj : playerobjects)
+    {
+        if(canMove(obj.first, dir))
+        {
+            const auto its {gamemap_.equal_range(obj.first)};
+            auto it {its.first};
+            while (it != its.second && it->second != obj.second) ++it;
+            gamemap_.erase(it);
+
+            gamemap_.insert({obj.first + dir, obj.second});
+        }
+    }
+
+    // 4. Reconstruire les règles
+    //buildRules();
+
+    // 5. Appliquer les règles
+    //applyRules();
 }
 
 // GETTERS

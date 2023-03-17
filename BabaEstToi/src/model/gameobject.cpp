@@ -25,11 +25,15 @@ Direction GameObject::getDirection() const { return dir_; }
 
 void GameObject::setDirection(Direction dir){ dir_ = dir; }
 
+bool GameObject::operator==(GameObject other)
+{
+    return type_ == other.type_;
+}
+
 // STRING MANIPULATION
 
 std::ostream & operator<<(std::ostream & out, const GameObject & obj)
 {
     return out << obj.getType();
 }
-
 }

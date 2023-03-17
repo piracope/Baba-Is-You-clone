@@ -10,7 +10,6 @@ public:
     static std::string getLevel(unsigned);
     static void writeSave(std::string);
     static std::string readSave(); // TODO : penser au fait que y a le n° de fichier à gérer
-    // TODO : writeLevel -> save and getLevel(path) -> save
 };
 
 #endif // FILEMANAGER_H

@@ -26,20 +26,20 @@ class Level
     // TODO : remettre une unordered_multimap (pas vraiment nécessaire en vrai)
     std::multimap<Position, GameObject> gamemap_;
     std::map<ObjectType, ObjectType> rules_;
-    unsigned width_ {0};
-    unsigned height_ {0};
+    int width_ {0};
+    int height_ {0};
     bool isWon_ {false};
 
     std::unordered_set<ObjectType> getPlayerObjects() const;
     std::vector<std::pair<Position, GameObject>> getAllOfType(ObjectType) const;
-    bool canMove(Position,Direction); // TODO
+    bool canMove(const Position, const Direction); // TODO
     void buildRules(); // TODO
     void applyRules(); // TODO
 
 public:
     Level(std::string);
 
-    void movePlayer(Direction); // TODO
+    void movePlayer(const Direction); // TODO
     std::string getState() const;
     bool isWon() const;
     Position getDimensions() const;
