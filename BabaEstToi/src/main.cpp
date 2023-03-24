@@ -7,13 +7,10 @@ int main()
     model::Baba baba;
     baba.move(model::Direction::UP);
     baba.move(model::Direction::UP);
-    baba.move(model::Direction::RIGHT);
-    baba.move(model::Direction::RIGHT);
-    baba.move(model::Direction::RIGHT);
+    baba.move(model::Direction::UP);
     std::cout << "=========================================\n" << baba.getState();
-    baba.move(model::Direction::DOWN);
+    baba.move(model::Direction::UP);
     std::cout << "=========================================\n" << baba.getState();
-
     baba.save();
     return 0;
 }

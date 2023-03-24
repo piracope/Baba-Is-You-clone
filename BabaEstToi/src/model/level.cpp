@@ -162,17 +162,21 @@ bool Level::canMove(const Position pos, const Direction dir)
     // 3. for each GameObject, we check if rules apply to it
     for (auto it {its.first}; it != its.second; ++it)
     {
-        const auto rules {rules_.equal_range(it->second.getType())}; // we get the rules aplied to this type
-        for (auto rule {rules.first}; rule != rules.second; ++rule) // for each of them
+        if(it->second.getCategorie() == Categorie::TEXT) toPush = it;
+        else // no rules can apply to a TEXT
         {
-            // 4. behavior depends on aspect
-            auto asp {rule->second};
-            if(asp == ObjectType::STOP) return false; // STOP : the move is not allowed
-            if(asp == ObjectType::PUSH || it->second.getCategorie() == Categorie::TEXT) toPush = it; // PUSH : we store the pointer to push it later
+            const auto rules {rules_.equal_range(it->second.getType())}; // we get the rules aplied to this type
+            for (auto rule {rules.first}; rule != rules.second; ++rule) // for each of them
+            {
+                // 4. behavior depends on aspect
+                auto asp {rule->second};
+                if(asp == ObjectType::STOP) return false; // STOP : the move is not allowed
+                if(asp == ObjectType::PUSH || it->second.getCategorie() == Categorie::TEXT) toPush = it; // PUSH : we store the pointer to push it later
 
-            /* NOTE : if multiple pushable objects are on the same tile, only one will be pushed.
-             * this is the behavior from the reference executable, so we keep it like this.
-             */
+                /* NOTE : if multiple pushable objects are on the same tile, only one will be pushed.
+                 * this is the behavior from the reference executable, so we keep it like this.
+                 */
+            }
         }
     }
 

@@ -12,7 +12,7 @@ GameObject::GameObject(ObjectType type, Categorie cat, Direction dir)
 GameObject::GameObject(ObjectType type, Direction dir)
     : type_ {type}, dir_ {dir}
 {
-    if(type < ObjectType::TEXT_ROCK) cat_ = Categorie::ELEM;
+    if(type < ObjectType::IS) cat_ = Categorie::ELEM;
     else if(type < ObjectType::KILL) cat_ = Categorie::TEXT;
     else cat_ = Categorie::ASPECT;
 }
