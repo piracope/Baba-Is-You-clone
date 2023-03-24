@@ -29,16 +29,19 @@ class Level
     int height_ {0};
     bool isWon_ {false};
 
+    // HELPER METHODS
+
     std::unordered_set<ObjectType> getPlayerObjects() const;
     std::vector<std::pair<Position, GameObject>> getAllOfType(ObjectType) const;
-    bool canMove(const Position, const Direction); // TODO
+    void moveTile(const std::pair<Position, GameObject>&, Direction); // TODO : change name maybe
+    bool canMove(const Position, const Direction);
     void buildRules(); // TODO
     void applyRules(); // TODO
 
 public:
     Level(std::string);
 
-    void movePlayer(const Direction); // TODO
+    void movePlayer(const Direction);
     std::string getState() const;
     bool isWon() const;
     Position getDimensions() const;

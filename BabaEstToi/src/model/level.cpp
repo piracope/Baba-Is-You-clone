@@ -134,12 +134,23 @@ std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type
     return ret;
 }
 
+void Level::moveTile(const std::pair<Position, GameObject>& tile, Direction dir)
+{
+    const auto its {gamemap_.equal_range(tile.first)}; // TODO : put that in helper method moveTile(pair<pos, obj>, dir)
+    auto it {its.first};
+    while (it != its.second && it->second != tile.second) ++it;
+    gamemap_.erase(it);
+
+    gamemap_.insert({tile.first + dir, tile.second});
+}
+
 // MOVEMENT
 
 bool Level::canMove(const Position pos, const Direction dir)
 {
     // 1. if pos + dir is out of bounds, move not allowed
     const Position final {pos + dir};
+
     if(final.x < 0 || final.y < 0 || final.x >= width_ || final.y >= height_)
         return false;
 
@@ -157,8 +168,7 @@ bool Level::canMove(const Position pos, const Direction dir)
             // 4. behavior depends on aspect
             auto asp {rule->second};
             if(asp == ObjectType::STOP) return false; // STOP : the move is not allowed
-            if(asp == ObjectType::PUSH) toPush = it; // PUSH : we store the pointer to push it later
-            // TODO : also add support for pushing TEXT elements
+            if(asp == ObjectType::PUSH || it->second.getCategorie() == Categorie::TEXT) toPush = it; // PUSH : we store the pointer to push it later
 
             /* NOTE : if multiple pushable objects are on the same tile, only one will be pushed.
              * this is the behavior from the reference executable, so we keep it like this.
@@ -179,19 +189,10 @@ bool Level::canMove(const Position pos, const Direction dir)
     const auto objToPush {*toPush};
 
     // we need to check if the pushable can be pushed to the end pos
+
     if(!canMove(final + dir, dir)) return false; // if not, move not allowed
 
-    // FIXME : moving multiple moveables is bugged
-
-    else // we push the GameObject to its end position
-    {
-        const auto its {gamemap_.equal_range(objToPush.first)}; // TODO : put that in helper method moveTile(pair<pos, obj>, dir)
-        auto it {its.first};
-        while (it != its.second && it->second != objToPush.second) ++it;
-        gamemap_.erase(it);
-
-        gamemap_.insert({objToPush.first + dir, objToPush.second});
-    }
+    else moveTile(objToPush, dir); // we push the GameObject to its end position
     return true;
 }
 
@@ -215,15 +216,7 @@ void Level::movePlayer(const Direction dir)
     // 3. For each GameObject, check if end pos is free, and move it in the gamemap if applicable
     for (const auto& obj : playerobjects)
     {
-        if(canMove(obj.first, dir))
-        {
-            const auto its {gamemap_.equal_range(obj.first)};
-            auto it {its.first};
-            while (it != its.second && it->second != obj.second) ++it;
-            gamemap_.erase(it);
-
-            gamemap_.insert({obj.first + dir, obj.second});
-        }
+        if(canMove(obj.first, dir)) moveTile(obj, dir);
     }
 
     // 4. rebuild the rules
