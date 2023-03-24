@@ -4,11 +4,12 @@
 #include <string>
 
 #include "level.h"
+#include "../observer/subject.h"
 
 namespace model
 {
 
-class Baba
+class Baba : public Subject
 {
     unsigned lvlNumber_;
     Level lvl_;
