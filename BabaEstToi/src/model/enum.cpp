@@ -5,6 +5,8 @@
 namespace model
 {
 
+// TODO : change that to a map
+
 std::string to_string(Categorie cat)
 {
     switch (cat) {

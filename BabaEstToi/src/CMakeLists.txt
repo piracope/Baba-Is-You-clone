@@ -18,6 +18,7 @@ add_executable(BabaEstToi
     observer/observer.h
     observer/subject.h
     observer/subject.cpp
+    ../resources.qrc
 )
 
 install(TARGETS BabaEstToi

@@ -17,6 +17,7 @@ void Baba::restart() { lvl_ = FileManager::getLevel(lvlNumber_); }
 void Baba::save() const { FileManager::writeSave(lvl_.getState());}
 
 void Baba::move(Direction dir) { lvl_.movePlayer(dir); }
+
 // GETTERS
 
 std::string Baba::getState() const { return lvl_.getState(); }

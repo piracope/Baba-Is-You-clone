@@ -6,10 +6,10 @@
 class FileManager
 {
     inline static const std::string START_OF_PATH {"levels/level_"};
-public: // FIXME : balancer ce niveau d'abstraction ailleurs
+public: // FIXME : this should be low level file reading, remove "level" abstraction
     static std::string getLevel(unsigned);
     static void writeSave(std::string);
-    static std::string readSave(); // TODO : penser au fait que y a le n° de fichier à gérer
+    static std::string readSave(); // TODO : also save lvlNumber
 };
 
 #endif // FILEMANAGER_H

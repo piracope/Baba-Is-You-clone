@@ -32,32 +32,38 @@ Position operator+(const Direction dir, const Position& pos)
     return pos + dir;
 }
 
-// USEFUL MAPS
 
-std::unordered_map<std::string, ObjectType> strtotype // FIXME : le balancer ailleurs ou jsp
+ObjectType strToType(const std::string& type)
 {
-    {"ROCK", ObjectType::ROCK},
-    {"WALL", ObjectType::WALL},
-    {"FLAG", ObjectType::FLAG},
-    {"METAL", ObjectType::METAL},
-    {"GRASS", ObjectType::GRASS},
-    {"WATER", ObjectType::WATER},
-    {"BABA", ObjectType::BABA},
-    {"IS", ObjectType::IS},
-    {"TEXT_ROCK", ObjectType::TEXT_ROCK},
-    {"TEXT_WALL", ObjectType::TEXT_WALL},
-    {"TEXT_FLAG", ObjectType::TEXT_FLAG},
-    {"TEXT_METAL", ObjectType::TEXT_METAL},
-    {"TEXT_GRASS", ObjectType::TEXT_GRASS},
-    {"TEXT_WATER", ObjectType::TEXT_WATER},
-    {"TEXT_BABA", ObjectType::TEXT_BABA},
-    {"KILL", ObjectType::KILL},
-    {"PUSH", ObjectType::PUSH},
-    {"STOP", ObjectType::STOP},
-    {"WIN", ObjectType::WIN},
-    {"SINK", ObjectType::SINK},
-    {"YOU", ObjectType::YOU}
-};
+    const static std::unordered_map<std::string, ObjectType> strtypemap
+    {
+        {"ROCK", ObjectType::ROCK},
+        {"WALL", ObjectType::WALL},
+        {"FLAG", ObjectType::FLAG},
+        {"METAL", ObjectType::METAL},
+        {"GRASS", ObjectType::GRASS},
+        {"WATER", ObjectType::WATER},
+        {"BABA", ObjectType::BABA},
+        {"IS", ObjectType::IS},
+        {"TEXT_ROCK", ObjectType::TEXT_ROCK},
+        {"TEXT_WALL", ObjectType::TEXT_WALL},
+        {"TEXT_FLAG", ObjectType::TEXT_FLAG},
+        {"TEXT_METAL", ObjectType::TEXT_METAL},
+        {"TEXT_GRASS", ObjectType::TEXT_GRASS},
+        {"TEXT_WATER", ObjectType::TEXT_WATER},
+        {"TEXT_BABA", ObjectType::TEXT_BABA},
+        {"KILL", ObjectType::KILL},
+        {"PUSH", ObjectType::PUSH},
+        {"STOP", ObjectType::STOP},
+        {"WIN", ObjectType::WIN},
+        {"SINK", ObjectType::SINK},
+        {"YOU", ObjectType::YOU}
+    };
+
+    return strtypemap.at(type);
+}
+
+
 
 // CONSTRUCTOR
 
@@ -66,6 +72,7 @@ Level::Level(std::string lvl)
     std::istringstream str {lvl};
 
     /* getting the dimensions */
+
     std::string tmp;
     std::getline(str, tmp);
 
@@ -74,13 +81,15 @@ Level::Level(std::string lvl)
     ++pos;
     height_ = std::stoi(tmp.substr(pos), &pos); // second -> height
 
+    /* putting the objects */
+
     while(std::getline(str, tmp))
     {
         std::istringstream line {tmp};
 
         std::string tmp2;
         std::getline(line, tmp2, ' ');
-        const ObjectType type { strtotype.at(tmp2) }; // first word -> type
+        const ObjectType type { strToType(tmp2) }; // first word -> type
 
         std::getline(line, tmp2, ' ');
         int x {std::stoi(tmp2)}; // second word -> pos.x
@@ -99,9 +108,7 @@ Level::Level(std::string lvl)
 
     //buildRules();
     //applyRules();
-
 }
-
 
 // HELPER METHODS
 
@@ -131,53 +138,54 @@ std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type
 
 bool Level::canMove(const Position pos, const Direction dir)
 {
-    /*
-        3. Pour chaque GameObject, on vérifie si le type de cet objet est concerné par une règle.
-            * Si aucun élément n'a de règle associée, le mouvement est permis
-            * Si sa catégorie est autre que ELEM, il sera d'office poussable. Le comportement est égal à celui défini plus bas.
-    */
-
-
-    // 1. Si pos + dir dépasse les limites de la map, elle retourne faux.
+    // 1. if pos + dir is out of bounds, move not allowed
     const Position final {pos + dir};
     if(final.x < 0 || final.y < 0 || final.x >= width_ || final.y >= height_)
         return false;
 
-    // 2. On récupère les GameObjects se trouvant à la position d'arrivée.
+    // 2. we get the GameObjects at the end position
     const auto its {gamemap_.equal_range(final)};
 
-    // 3. Pour chaque GameObject, on vérifie si le type de cet objet est concerné par une règle.
+    decltype(its.first) toPush {gamemap_.end()}; // for storing the pointer to a potential pushable object
 
-    decltype(its.first) toPush {gamemap_.end()};
-
+    // 3. for each GameObject, we check if rules apply to it
     for (auto it {its.first}; it != its.second; ++it)
     {
-        const auto rules {rules_.equal_range(it->second.getType())}; // on chope le type et ses regles
-        for (auto rule {rules.first}; rule != rules.second; ++rule)
+        const auto rules {rules_.equal_range(it->second.getType())}; // we get the rules aplied to this type
+        for (auto rule {rules.first}; rule != rules.second; ++rule) // for each of them
         {
-            // 4. En fonction de l'Aspect de la règle, plusieurs actions seront effectuées
+            // 4. behavior depends on aspect
             auto asp {rule->second};
-            if(asp == ObjectType::STOP) return false; // STOP : le mouvement est refusé
-            if(asp == ObjectType::PUSH) toPush = it;
+            if(asp == ObjectType::STOP) return false; // STOP : the move is not allowed
+            if(asp == ObjectType::PUSH) toPush = it; // PUSH : we store the pointer to push it later
+            // TODO : also add support for pushing TEXT elements
+
+            /* NOTE : if multiple pushable objects are on the same tile, only one will be pushed.
+             * this is the behavior from the reference executable, so we keep it like this.
+             */
         }
     }
 
-    /* Si on arrive ici c'est que soit :
-     *  1. y a aucun élément à la position final
-     *  2. y a aucune règle sur les éléments
-     *  3. y a aucun STOP
+    /* If we're still in this method :
+     *  1. there are no GameObjects at the end position
+     *  2. there are no rules applied to those GameObjects
+     *  3. none of the rules are STOP
      */
 
-    // donc, si aucun PUSH non plus, c'est bon
+    // thus, if no PUSH was encountered either, the move is allowed
     if(toPush == gamemap_.end()) return true;
 
+    // we dereference the GameObject to push, as the pointer would become obsolete if a change is made to gamemap
     const auto objToPush {*toPush};
 
-    //sinon, je check s'il est pushable.
-    if(!canMove(final + dir, dir)) return false;
-    else
+    // we need to check if the pushable can be pushed to the end pos
+    if(!canMove(final + dir, dir)) return false; // if not, move not allowed
+
+    // FIXME : moving multiple moveables is bugged
+
+    else // we push the GameObject to its end position
     {
-        const auto its {gamemap_.equal_range(objToPush.first)};
+        const auto its {gamemap_.equal_range(objToPush.first)}; // TODO : put that in helper method moveTile(pair<pos, obj>, dir)
         auto it {its.first};
         while (it != its.second && it->second != objToPush.second) ++it;
         gamemap_.erase(it);
@@ -191,12 +199,12 @@ void Level::movePlayer(const Direction dir)
 {
     if(isWon_) throw std::logic_error {"Cannot move when game is won."};
 
-    // 1. Récupérer les types d'éléments contrôlables par le joueur
+    // 1. get player controlled types (X IS MOVE)
     const auto playertypes {getPlayerObjects()};
 
     if(playertypes.empty()) return;
 
-    // 2. Pour chacun de ces types, récupérer les GameObjects de ce type
+    // 2. for each of those types, get all GameObjects of that type
     std::vector<std::pair<Position, GameObject>> playerobjects {};
     for (const auto type : playertypes)
     {
@@ -204,24 +212,24 @@ void Level::movePlayer(const Direction dir)
         playerobjects.insert(playerobjects.end(), obj.begin(), obj.end());
     }
 
-    // 3. Pour chaque élément, tester si bouger le GameObject est possible, et si oui, le déplacer dans la map.
+    // 3. For each GameObject, check if end pos is free, and move it in the gamemap if applicable
     for (const auto& obj : playerobjects)
     {
         if(canMove(obj.first, dir))
         {
             const auto its {gamemap_.equal_range(obj.first)};
             auto it {its.first};
-            while (it != its.second && it->second != obj.second) ++it; // FIXME : bouger a la chaine bouge le premier et dernier seulement
+            while (it != its.second && it->second != obj.second) ++it;
             gamemap_.erase(it);
 
             gamemap_.insert({obj.first + dir, obj.second});
         }
     }
 
-    // 4. Reconstruire les règles
+    // 4. rebuild the rules
     //buildRules();
 
-    // 5. Appliquer les règles
+    // 5. apply the rules
     //applyRules();
 }
 

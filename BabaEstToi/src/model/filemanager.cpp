@@ -9,6 +9,8 @@ std::string FileManager::getLevel(unsigned nb)
     std::stringstream path;
     path << START_OF_PATH << nb << ".txt";
 
+    // TODO : use resource from qrc instead
+
     std::ifstream lvl {path.str()};
     lvl.exceptions(std::ios::failbit); // throws if bad file
 
@@ -25,7 +27,7 @@ std::string FileManager::getLevel(unsigned nb)
 void FileManager::writeSave(std::string lvl)
 {
     std::stringstream path;
-    path << START_OF_PATH << "S.txt"; // FIXME : se mettre d'accord là-dessus
+    path << START_OF_PATH << "S.txt"; // FIXME : we need to pick something definitive
 
     std::ofstream save {path.str()};
     save.exceptions(std::ios::failbit);
