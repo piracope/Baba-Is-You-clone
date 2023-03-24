@@ -35,7 +35,9 @@ class Level
     std::vector<std::pair<Position, GameObject>> getAllOfType(ObjectType) const;
     void moveTile(const std::pair<Position, GameObject>&, Direction); // TODO : change name maybe
     bool canMove(const Position, const Direction);
-    void buildRules(); // TODO
+    void mutateAll(const ObjectType, const ObjectType);
+    void processRule(const ObjectType, const ObjectType);
+    void buildRules();
     void applyRules(); // TODO
 
 public:

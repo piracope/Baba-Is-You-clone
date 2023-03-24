@@ -2,6 +2,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <stdexcept>
+#include <iostream> // TODO : remove before release
 
 #include "level.h"
 
@@ -63,6 +64,27 @@ ObjectType strToType(const std::string& type)
     return strtypemap.at(type);
 }
 
+ObjectType getRefType(const ObjectType type)
+{
+    const static std::unordered_map<ObjectType, ObjectType> textToRefMap
+    {
+        {ObjectType::TEXT_ROCK, ObjectType::ROCK},
+        {ObjectType::TEXT_WALL, ObjectType::WALL},
+        {ObjectType::TEXT_FLAG, ObjectType::FLAG},
+        {ObjectType::TEXT_METAL, ObjectType::METAL},
+        {ObjectType::TEXT_GRASS, ObjectType::GRASS},
+        {ObjectType::TEXT_WATER, ObjectType::WATER},
+        {ObjectType::TEXT_BABA, ObjectType::BABA}
+    };
+
+    try
+    {
+        return textToRefMap.at(type);
+    } catch (const std::out_of_range&)
+    {
+        return ObjectType::IS;
+    }
+}
 
 
 // CONSTRUCTOR
@@ -101,12 +123,7 @@ Level::Level(std::string lvl)
         gamemap_.insert({{x, y}, type}); // we add a GameObject (implicit constr) at (x, y)
     }
 
-    // TODO : enlever ça
-    rules_.insert({ObjectType::BABA, ObjectType::YOU});
-    //rules_.insert({ObjectType::WALL, ObjectType::STOP});
-    rules_.insert({ObjectType::ROCK, ObjectType::PUSH});
-
-    //buildRules();
+    buildRules();
     //applyRules();
 }
 
@@ -134,17 +151,93 @@ std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type
     return ret;
 }
 
+void Level::mutateAll(const ObjectType from, const ObjectType to)
+{
+    for (auto &p : gamemap_)
+    {
+        if(p.second.getType() == from) p.second = GameObject{to};
+    }
+}
+
+void Level::processRule(const ObjectType lhs, const ObjectType rhs)
+{
+    const auto refType {getRefType(lhs)};
+    if(refType == ObjectType::IS) return;
+
+    if(rhs >= ObjectType::KILL) // NOTE : KILL is the first ASPECT
+    {
+        rules_.insert({refType, rhs});
+    }
+    else if(rhs > ObjectType::IS)
+    {
+        const auto refTypeRight {getRefType(rhs)};
+        if(refTypeRight != ObjectType::IS) mutateAll(refType, refTypeRight);
+    }
+
+}
+
+void Level::buildRules()
+{
+    // 1. clear rules
+    rules_.clear();
+
+    // 2. get all IS connectors
+    const auto is {getAllOfType(ObjectType::IS)};
+
+    // 3. for each IS, check if horizontal rule exists
+    for (const auto& obj : is)
+    {
+
+
+        std::array<std::pair<Direction, Direction>, 2> dirs {
+            {
+            {Direction::LEFT, Direction::RIGHT},
+            {Direction::UP, Direction::DOWN}
+        }};
+
+        for(const auto& dir : dirs)
+        {
+            ObjectType lhs {ObjectType::IS}; // IS : sentinel value
+            ObjectType rhs {ObjectType::IS};
+
+            auto its {gamemap_.equal_range(obj.first + dir.first)};
+            auto it {its.first};
+            while (it != its.second)
+            {
+                if(it->second.getCategorie() == Categorie::TEXT)
+                {
+                    lhs = it->second.getType();
+                    it = its.second; // break
+                }
+                else ++it;
+            }
+
+            if(lhs != ObjectType::IS)
+            {
+                its = gamemap_.equal_range(obj.first + dir.second);
+                if(its.first != its.second) rhs = its.first->second.getType();
+            }
+
+            if(rhs != ObjectType::IS)
+            {
+                processRule(lhs, rhs);
+            }
+        }
+    }
+}
+
+// MOVEMENT
+
 void Level::moveTile(const std::pair<Position, GameObject>& tile, Direction dir)
 {
-    const auto its {gamemap_.equal_range(tile.first)}; // TODO : put that in helper method moveTile(pair<pos, obj>, dir)
+    const auto its {gamemap_.equal_range(tile.first)};
     auto it {its.first};
     while (it != its.second && it->second != tile.second) ++it;
     gamemap_.erase(it);
 
     gamemap_.insert({tile.first + dir, tile.second});
+    // TODO : change GameObject direction
 }
-
-// MOVEMENT
 
 bool Level::canMove(const Position pos, const Direction dir)
 {
