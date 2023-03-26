@@ -179,7 +179,7 @@ bool Level::canMove(const Position pos, const Direction dir)
     const auto objToPush {*toPush};
 
     // we need to check if the pushable can be pushed to the end pos
-    if(!canMove(final + dir, dir)) return false; // if not, move not allowed
+    if(!canMove(final, dir)) return false; // if not, move not allowed
 
     // FIXME : moving multiple moveables is bugged
 
