@@ -166,10 +166,12 @@ void Level::processRule(const ObjectType lhs, const ObjectType rhs)
 
     if(rhs >= ObjectType::KILL) // NOTE : KILL is the first ASPECT
     {
-        rules_.insert({refType, rhs});
+        rules_.insert({refType, rhs}); // if right part of the rule is an ASPECT, add to the rules
     }
     else if(rhs > ObjectType::IS)
     {
+        // if not, mutate all tiles from left to right
+        // BABA IS WALL => BABA becomes WALL
         const auto refTypeRight {getRefType(rhs)};
         if(refTypeRight != ObjectType::IS) mutateAll(refType, refTypeRight);
     }
@@ -185,11 +187,12 @@ void Level::buildRules()
     const auto is {getAllOfType(ObjectType::IS)};
 
     // 3. for each IS, check if horizontal rule exists
+    // TODO : optimization : keep in a set or something the position of every IS
     for (const auto& obj : is)
     {
 
 
-        std::array<std::pair<Direction, Direction>, 2> dirs {
+        std::array<std::pair<Direction, Direction>, 2> dirs { // did this to not copypaste the code
             {
             {Direction::LEFT, Direction::RIGHT},
             {Direction::UP, Direction::DOWN}
@@ -200,14 +203,16 @@ void Level::buildRules()
             ObjectType lhs {ObjectType::IS}; // IS : sentinel value
             ObjectType rhs {ObjectType::IS};
 
+            // we get the objects at the left
             auto its {gamemap_.equal_range(obj.first + dir.first)};
             auto it {its.first};
             while (it != its.second)
             {
+                // if one of them is a TEXT
                 if(it->second.getCategorie() == Categorie::TEXT)
                 {
-                    lhs = it->second.getType();
-                    it = its.second; // break
+                    lhs = it->second.getType(); // we have our left part of the rule
+                    it = its.second; // and we exit the loop (literally a break)
                 }
                 else ++it;
             }
@@ -215,12 +220,22 @@ void Level::buildRules()
             if(lhs != ObjectType::IS)
             {
                 its = gamemap_.equal_range(obj.first + dir.second);
-                if(its.first != its.second) rhs = its.first->second.getType();
+                while (it != its.second)
+                {
+                    // if one of them is a TEXT or ASPECT
+                    if(it->second.getCategorie() != Categorie::ELEM)
+                    {
+                        lhs = it->second.getType(); // we have our right part of the rule
+                        it = its.second; // and we exit the loop (literally a break)
+                    }
+                    else ++it;
+                }
+                // FIXME : DRY. but idk how to change this
             }
 
-            if(rhs != ObjectType::IS)
+            if(rhs != ObjectType::IS) //if the rule was built
             {
-                processRule(lhs, rhs);
+                processRule(lhs, rhs); // process it
             }
         }
     }
@@ -273,6 +288,9 @@ bool Level::canMove(const Position pos, const Direction dir)
         }
     }
 
+    // FIXME : i read a funny thing on cppreference and stackoverflow about pointers and iterators that are
+    // not invalidated, so maybe this method is needlessly hard
+
     /* If we're still in this method :
      *  1. there are no GameObjects at the end position
      *  2. there are no rules applied to those GameObjects
@@ -317,7 +335,7 @@ void Level::movePlayer(const Direction dir)
     }
 
     // 4. rebuild the rules
-    //buildRules();
+    buildRules();
 
     // 5. apply the rules
     //applyRules();
@@ -328,7 +346,7 @@ void Level::movePlayer(const Direction dir)
 std::string Level::getState() const
 {
     std::ostringstream ret {};
-    ret << width_ << ' ' << height_ << std::endl;
+    ret << width_ << ' ' << height_ << std::endl; // first line - dimensions
     for (const auto& [pos, obj] : gamemap_)
     {
         ret << obj << ' ' << pos.x << ' ' << pos.y;
