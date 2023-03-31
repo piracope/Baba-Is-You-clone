@@ -12,6 +12,7 @@ ViewConsole::ViewConsole(model::Baba * baba) :
     baba_ {baba}
 {
     baba_->registerObserver(this);
+    ViewConsole::update(baba);
 }
 
 ViewConsole::~ViewConsole()

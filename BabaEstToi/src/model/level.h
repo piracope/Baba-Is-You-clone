@@ -32,7 +32,7 @@ class Level
 
     // HELPER METHODS
 
-    std::unordered_set<ObjectType> getPlayerObjects() const;
+    std::unordered_set<ObjectType> getPlayerTypes() const;
     std::vector<std::pair<Position, GameObject>> getAllOfType(ObjectType) const;
     void removeTile(const std::pair<Position, GameObject>&);
     void moveTile(const std::pair<Position, GameObject>&, Direction); // TODO : change name maybe

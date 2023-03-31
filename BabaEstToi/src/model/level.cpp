@@ -136,7 +136,7 @@ Level::Level(std::string lvl)
 
 // HELPER METHODS
 
-std::unordered_set<ObjectType> Level::getPlayerObjects() const
+std::unordered_set<ObjectType> Level::getPlayerTypes() const
 {
     std::unordered_set<ObjectType> ret {};
     for (const auto& [type, asp] : rules_)
@@ -168,7 +168,6 @@ void Level::mutateAll(const ObjectType from, const ObjectType to)
 
 void Level::processRule(const ObjectType lhs, const ObjectType rhs)
 {
-    //std::cout << "DEBUG | processRule | Started processing rule " << lhs << " IS " << rhs << std::endl;
     const auto refType {getRefType(lhs)};
     if(refType == ObjectType::IS) return;
 
@@ -270,7 +269,7 @@ void Level::removeTile(const std::pair<Position, GameObject>& obj)
 
 void Level::applyRules()
 {
-    const auto playertypes {getPlayerObjects()};
+    const auto playertypes {getPlayerTypes()};
 
     if(playertypes.empty()) return;
 
@@ -389,7 +388,7 @@ void Level::movePlayer(const Direction dir)
     if(isWon_) throw std::logic_error {"Cannot move when game is won."};
 
     // 1. get player controlled types (X IS MOVE)
-    const auto playertypes {getPlayerObjects()};
+    const auto playertypes {getPlayerTypes()};
 
     if(playertypes.empty()) return;
 
@@ -410,6 +409,7 @@ void Level::movePlayer(const Direction dir)
     // 4. rebuild the rules
     buildRules();
 
+    // TODO : only build rules if !ELEM moved
     // 5. apply the rules
     applyRules();
 }
