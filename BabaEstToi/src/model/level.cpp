@@ -16,6 +16,10 @@ bool Position::operator<(const Position& other) const
     return y < other.y || y == other.y && x < other.x;
 }
 
+bool Position::operator==(const Position& other) const
+{
+    return x == other.x && y == other.y;
+}
 Position operator+(const Position& pos, const Direction dir)
 {
     const static std::unordered_map<Direction, Position> dirToVector
@@ -124,7 +128,7 @@ Level::Level(std::string lvl)
     }
 
     buildRules();
-    //applyRules();
+    applyRules();
 }
 
 // HELPER METHODS
@@ -241,6 +245,60 @@ void Level::buildRules()
     }
 }
 
+void Level::removeTile(const std::pair<Position, GameObject>& obj)
+{
+    const auto its {gamemap_.equal_range(obj.first)};
+    auto it {its.first};
+    while (it != its.second && it->second != obj.second) ++it;
+    gamemap_.erase(it);
+}
+
+void Level::applyRules()
+{
+    const auto playertypes {getPlayerObjects()};
+
+    if(playertypes.empty()) return;
+
+    std::vector<std::pair<Position, GameObject>> playerobjects {};
+    for (const auto type : playertypes)
+    {
+        const auto obj {getAllOfType(type)};
+        playerobjects.insert(playerobjects.end(), obj.begin(), obj.end());
+    }
+
+    for (auto &obj : gamemap_)
+    {
+        // FIXME : nested ifs -> decompose
+        const auto rules {rules_.equal_range(obj.second.getType())}; // we get the rules aplied to this type
+        for (auto rule {rules.first}; rule != rules.second; ++rule) // for each of them
+        {
+            auto asp {rule->second};
+            if(asp == ObjectType::SINK) // FIXME : rearranged the priority, may not work!
+            {
+                if(gamemap_.count(obj.first) > 1)
+                {
+                    removeTile(obj);
+                    removeTile(*gamemap_.find(obj.first));
+                    return;
+                }
+            }
+
+            for(const auto& playerObj : playerobjects)
+            {
+                if(playerObj.first == obj.first)
+                {
+                    if(asp == ObjectType::WIN)
+                    {
+                        isWon_ = true;
+                        return;
+                    }
+                    else if (asp == ObjectType::KILL) removeTile(playerObj);
+                }
+            }
+        }
+    }
+}
+
 // MOVEMENT
 
 void Level::moveTile(const std::pair<Position, GameObject>& tile, Direction dir)
@@ -338,7 +396,7 @@ void Level::movePlayer(const Direction dir)
     buildRules();
 
     // 5. apply the rules
-    //applyRules();
+    applyRules();
 }
 
 // GETTERS

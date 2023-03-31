@@ -1,3 +1,4 @@
+#include <unordered_map>
 #include <ostream>
 
 #include "enum.h"
@@ -5,70 +6,48 @@
 namespace model
 {
 
-// TODO : change that to a map
-
 std::string to_string(Categorie cat)
 {
-    switch (cat) {
-    case Categorie::ELEM:
-        return "ELEM";
-    case Categorie::ASPECT:
-        return "ASPECT";
-    case Categorie::TEXT:
-        return "TEXT";
-    default:
-        return "";
-    }
+    // FIXME : probably unused
+    const static std::unordered_map<Categorie, std::string> cattostr
+    {
+        {Categorie::ELEM, "ELEM"},
+        {Categorie::ASPECT, "ASPECT"},
+        {Categorie::TEXT, "TEXT"},
+    };
+
+    return cattostr.at(cat);
 }
 
 std::string to_string(ObjectType type)
 {
-    switch (type) {
-    case ObjectType::ROCK:
-        return "ROCK";
-    case ObjectType::WALL:
-        return "WALL";
-    case ObjectType::FLAG:
-        return "FLAG";
-    case ObjectType::METAL:
-        return "METAL";
-    case ObjectType::GRASS:
-        return "GRASS";
-    case ObjectType::WATER:
-        return "WATER";
-    case ObjectType::BABA:
-        return "BABA";
-    case ObjectType::IS:
-        return "IS";
-    case ObjectType::TEXT_ROCK:
-        return "TEXT_ROCK";
-    case ObjectType::TEXT_WALL:
-        return "TEXT_WALL";
-    case ObjectType::TEXT_FLAG:
-        return "TEXT_FLAG";
-    case ObjectType::TEXT_METAL:
-        return "TEXT_METAL";
-    case ObjectType::TEXT_GRASS:
-        return "TEXT_GRASS";
-    case ObjectType::TEXT_WATER:
-        return "TEXT_WATER";
-    case ObjectType::TEXT_BABA:
-        return "TEXT_BABA";
-    case ObjectType::KILL:
-        return "KILL";
-    case ObjectType::PUSH:
-        return "PUSH";
-    case ObjectType::STOP:
-        return "STOP";
-    case ObjectType::WIN:
-        return "WIN";
-    case ObjectType::SINK:
-        return "SINK";
-    case ObjectType::YOU:
-        return "YOU";
-    default:
-        return "";
-    }
+    const static std::unordered_map<ObjectType, std::string> typetostr
+    {
+        {ObjectType::ROCK, "ROCK"},
+        {ObjectType::WALL, "WALL"},
+        {ObjectType::FLAG, "FLAG"},
+        {ObjectType::METAL, "METAL"},
+        {ObjectType::GRASS, "GRASS"},
+        {ObjectType::WATER, "WATER"},
+        {ObjectType::BABA, "BABA"},
+        {ObjectType::IS, "IS"},
+        {ObjectType::TEXT_ROCK, "TEXT_ROCK"},
+        {ObjectType::TEXT_WALL, "TEXT_WALL"},
+        {ObjectType::TEXT_FLAG, "TEXT_FLAG"},
+        {ObjectType::TEXT_METAL, "TEXT_METAL"},
+        {ObjectType::TEXT_GRASS, "TEXT_GRASS"},
+        {ObjectType::TEXT_WATER, "TEXT_WATER"},
+        {ObjectType::TEXT_BABA, "TEXT_BABA"},
+        {ObjectType::TEXT_BABA, "TEXT_BABA"},
+        {ObjectType::KILL, "KILL"},
+        {ObjectType::PUSH, "PUSH"},
+        {ObjectType::STOP, "STOP"},
+        {ObjectType::WIN, "WIN"},
+        {ObjectType::SINK, "SINK"},
+        {ObjectType::YOU, "YOU"}
+    };
+
+    return typetostr.at(type);
 }
 
 std::ostream & operator<<(std::ostream & out, Categorie cat)
@@ -83,6 +62,7 @@ std::ostream & operator<<(std::ostream & out, ObjectType type)
 
 std::ostream & operator<<(std::ostream & out, Direction dir)
 {
+    // TODO : a bit lazy to make it a map fr
     switch(dir)
     {
     case Direction::RIGHT:

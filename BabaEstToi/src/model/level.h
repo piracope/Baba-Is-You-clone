@@ -16,6 +16,7 @@ struct Position
     int y;
 
     bool operator<(const Position&) const; // need comparison operator to make the map work
+    bool operator==(const Position&) const;
 };
 
 Position operator+(const Position&, const Direction);
@@ -33,6 +34,7 @@ class Level
 
     std::unordered_set<ObjectType> getPlayerObjects() const;
     std::vector<std::pair<Position, GameObject>> getAllOfType(ObjectType) const;
+    void removeTile(const std::pair<Position, GameObject>&);
     void moveTile(const std::pair<Position, GameObject>&, Direction); // TODO : change name maybe
     bool canMove(const Position, const Direction);
     void mutateAll(const ObjectType, const ObjectType);
