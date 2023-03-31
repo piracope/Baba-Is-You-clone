@@ -41,6 +41,7 @@ win 17 15
 text_lava 1 17
 is 2 17
 kill 3 17
+baba 3 7
 wall 1 5
 wall 2 5
 wall 3 5

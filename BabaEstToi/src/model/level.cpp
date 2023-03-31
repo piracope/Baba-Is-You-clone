@@ -47,6 +47,7 @@ ObjectType strToType(const std::string& type)
         {"FLAG", ObjectType::FLAG},
         {"METAL", ObjectType::METAL},
         {"GRASS", ObjectType::GRASS},
+        {"LAVA", ObjectType::LAVA},
         {"WATER", ObjectType::WATER},
         {"BABA", ObjectType::BABA},
         {"IS", ObjectType::IS},
@@ -55,6 +56,7 @@ ObjectType strToType(const std::string& type)
         {"TEXT_FLAG", ObjectType::TEXT_FLAG},
         {"TEXT_METAL", ObjectType::TEXT_METAL},
         {"TEXT_GRASS", ObjectType::TEXT_GRASS},
+        {"TEXT_LAVA", ObjectType::TEXT_LAVA},
         {"TEXT_WATER", ObjectType::TEXT_WATER},
         {"TEXT_BABA", ObjectType::TEXT_BABA},
         {"KILL", ObjectType::KILL},
@@ -76,6 +78,7 @@ ObjectType getRefType(const ObjectType type)
         {ObjectType::TEXT_WALL, ObjectType::WALL},
         {ObjectType::TEXT_FLAG, ObjectType::FLAG},
         {ObjectType::TEXT_METAL, ObjectType::METAL},
+        {ObjectType::TEXT_LAVA, ObjectType::LAVA},
         {ObjectType::TEXT_GRASS, ObjectType::GRASS},
         {ObjectType::TEXT_WATER, ObjectType::WATER},
         {ObjectType::TEXT_BABA, ObjectType::BABA}
@@ -165,6 +168,7 @@ void Level::mutateAll(const ObjectType from, const ObjectType to)
 
 void Level::processRule(const ObjectType lhs, const ObjectType rhs)
 {
+    //std::cout << "DEBUG | processRule | Started processing rule " << lhs << " IS " << rhs << std::endl;
     const auto refType {getRefType(lhs)};
     if(refType == ObjectType::IS) return;
 
@@ -187,14 +191,17 @@ void Level::buildRules()
     // 1. clear rules
     rules_.clear();
 
+    //std::cout << "DEBUG | buildRules | Cleared rules" << std::endl;
+
     // 2. get all IS connectors
     const auto is {getAllOfType(ObjectType::IS)};
+
+    //std::cout << "DEBUG | buildRules | Number of IS : " << is.size() << std::endl;
 
     // 3. for each IS, check if horizontal rule exists
     // TODO : optimization : keep in a set or something the position of every IS
     for (const auto& obj : is)
     {
-
 
         std::array<std::pair<Direction, Direction>, 2> dirs { // did this to not copypaste the code
             {
@@ -223,13 +230,15 @@ void Level::buildRules()
 
             if(lhs != ObjectType::IS)
             {
+                //std::cout << "DEBUG | buildRules | Found a LHS : " << lhs << std::endl;
                 its = gamemap_.equal_range(obj.first + dir.second);
+                auto it {its.first};
                 while (it != its.second)
                 {
                     // if one of them is a TEXT or ASPECT
                     if(it->second.getCategorie() != Categorie::ELEM)
                     {
-                        lhs = it->second.getType(); // we have our right part of the rule
+                        rhs = it->second.getType(); // we have our right part of the rule
                         it = its.second; // and we exit the loop (literally a break)
                     }
                     else ++it;
@@ -243,6 +252,12 @@ void Level::buildRules()
             }
         }
     }
+
+    /*
+    for(const auto &truc : rules_)
+    {
+        std::cout << truc.first << " IS " << truc.second << std::endl;
+    }*/
 }
 
 void Level::removeTile(const std::pair<Position, GameObject>& obj)
@@ -277,7 +292,7 @@ void Level::applyRules()
             {
                 if(gamemap_.count(obj.first) > 1)
                 {
-                    removeTile(obj);
+                    removeTile(obj); // TODO : can't kill TEXT
                     removeTile(*gamemap_.find(obj.first));
                     return;
                 }
@@ -328,7 +343,7 @@ bool Level::canMove(const Position pos, const Direction dir)
     // 3. for each GameObject, we check if rules apply to it
     for (auto it {its.first}; it != its.second; ++it)
     {
-        if(it->second.getCategorie() == Categorie::TEXT) toPush = it;
+        if(it->second.getCategorie() != Categorie::ELEM) toPush = it;
         else // no rules can apply to a TEXT
         {
             const auto rules {rules_.equal_range(it->second.getType())}; // we get the rules aplied to this type
@@ -337,7 +352,7 @@ bool Level::canMove(const Position pos, const Direction dir)
                 // 4. behavior depends on aspect
                 auto asp {rule->second};
                 if(asp == ObjectType::STOP) return false; // STOP : the move is not allowed
-                if(asp == ObjectType::PUSH || it->second.getCategorie() == Categorie::TEXT) toPush = it; // PUSH : we store the pointer to push it later
+                if(asp == ObjectType::PUSH) toPush = it; // PUSH : we store the pointer to push it later
 
                 /* NOTE : if multiple pushable objects are on the same tile, only one will be pushed.
                  * this is the behavior from the reference executable, so we keep it like this.
@@ -363,7 +378,7 @@ bool Level::canMove(const Position pos, const Direction dir)
 
     // we need to check if the pushable can be pushed to the end pos
 
-    if(!canMove(final + dir, dir)) return false; // if not, move not allowed
+    if(!canMove(final, dir)) return false; // if not, move not allowed
 
     else moveTile(objToPush, dir); // we push the GameObject to its end position
     return true;

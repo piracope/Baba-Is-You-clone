@@ -4,7 +4,7 @@
 namespace model
 {
 
-Baba::Baba() : lvl_ {FileManager::getLevel(0)}, lvlNumber_ {0}
+Baba::Baba() : lvl_ {FileManager::getLevel(4)}, lvlNumber_ {0} // TODO : put back to 0
 {}
 
 void Baba::createLevel(unsigned nb)

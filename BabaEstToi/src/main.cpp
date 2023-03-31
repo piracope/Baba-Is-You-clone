@@ -8,7 +8,6 @@ int main()
     model::Baba baba;
     view::ViewConsole v {&baba};
     string line;
-    baba.move(model::Direction::UP);
     cin >> line;
     while (line != "exit")
     {

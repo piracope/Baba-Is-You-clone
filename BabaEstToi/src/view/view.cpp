@@ -20,6 +20,7 @@ ViewConsole::~ViewConsole()
 }
 
 void typeToCout(std::string type){
+
     if (type == "WALL"){
         std::cout << std::setw(6) << "WALL";
     } else if (type == "ROCK"){
@@ -62,7 +63,13 @@ void typeToCout(std::string type){
         std::cout << std::setw(6) << "SINK";
     }  else if (type == "YOU"){
         std::cout << std::setw(6) << "YOU";
+    } else if (type == "LAVA"){
+        std::cout << std::setw(6) << "LAVA";
+    } else if (type == "TEXT_LAVA"){
+        std::cout << std::setw(6) << "TLAVA";
     }
+
+    //std::cout << std::setw(6) << type;
 }
 
 void ViewConsole::update(const Subject * subject)
