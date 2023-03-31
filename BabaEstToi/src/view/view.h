@@ -14,6 +14,7 @@ public:
     explicit ViewConsole(model::Baba * baba);
     ~ViewConsole();
     void update(const Subject * subject) override;
+    std::string askLine();
 };
 }
 #endif // VIEW_H

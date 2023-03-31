@@ -13,8 +13,15 @@ void Baba::createLevel(unsigned nb)
     lvlNumber_ = nb;
 }
 
-void Baba::restart() { lvl_ = FileManager::getLevel(lvlNumber_); }
+void Baba::restart() {
+    lvl_ = FileManager::getLevel(lvlNumber_);
+    notifyObservers();
+}
 void Baba::save() const { FileManager::writeSave(lvl_.getState());}
+
+void Baba::load() {
+    notifyObservers();
+}
 
 void Baba::move(Direction dir) {
     lvl_.movePlayer(dir);

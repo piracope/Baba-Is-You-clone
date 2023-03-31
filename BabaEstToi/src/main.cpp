@@ -1,33 +1,17 @@
 #include <iostream>
 #include "model/baba.h"
 #include "view/view.h"
+#include "controller/controller.h"
 using namespace std;
 
 int main()
 {
-    model::Baba baba;
-    view::ViewConsole v {&baba};
+    controller::Controller c {};
     string line;
-    baba.move(model::Direction::UP);
     cin >> line;
     while (line != "exit")
     {
-        if(line == "z")
-        {
-            baba.move(model::Direction::UP);
-        }
-        else if (line == "s")
-        {
-            baba.move(model::Direction::DOWN);
-        }
-        else if(line == "q")
-        {
-            baba.move(model::Direction::LEFT);
-        }
-        else if(line == "d")
-        {
-            baba.move(model::Direction::RIGHT);
-        }
+        c.play(line);
         cin >> line;
     }
     return 0;

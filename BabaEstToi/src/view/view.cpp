@@ -9,7 +9,7 @@ namespace view
 {
 
 ViewConsole::ViewConsole(model::Baba * baba) :
-    baba_ {baba}
+    baba_ {baba} //changer ça doit être le controller
 {
     baba_->registerObserver(this);
 }
@@ -17,6 +17,13 @@ ViewConsole::ViewConsole(model::Baba * baba) :
 ViewConsole::~ViewConsole()
 {
     baba_->unregisterObserver(this);
+}
+
+std::string ViewConsole::askLine()
+{
+    std::string line;
+    std::cin >> line;
+    return line;
 }
 
 void typeToCout(std::string type){
