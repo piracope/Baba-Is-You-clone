@@ -117,6 +117,8 @@ void ViewConsole::update(const Subject * subject)
                    end = board.find(' ');
                 }
             // This step is put there because in the while loop it does not do the last iteration
+            // BUG : adding direction makes everything break as y is not necessarily the last element!!!!
+            // This is also needlessly complicated i think. Level::Level does literally the same thing, so why not just copy-paste
             y = std::stoi(board.substr(0, end));
             ++step;
             //end of the cut "function"

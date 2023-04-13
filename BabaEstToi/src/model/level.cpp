@@ -1,9 +1,8 @@
-#include <string>
-#include <sstream>
-#include <unordered_map>
-#include <stdexcept>
-#include <iostream> // TODO : remove before release
 #include <array>
+#include <sstream>
+#include <stdexcept>
+#include <string>
+#include <unordered_map>
 #include <unordered_set>
 
 #include "level.h"
@@ -157,16 +156,23 @@ Level::Level(const std::string& lvl)
 
 std::vector<std::pair<Position, GameObject>> Level::getPlayerObjects() const
 {
+    // we get the player-vontrolled types
     std::unordered_set<ObjectType> playertypes {};
     for (const auto& [type, asp] : rules_)
     {
         if(asp == ObjectType::YOU) playertypes.insert(type);
     }
 
+    // and for each of them, get all the objects
     std::vector<std::pair<Position, GameObject>> playerobjects {};
     for (const auto type : playertypes)
     {
         const auto obj {getAllOfType(type)};
+        /* NOTE : yeah, this scans the map for each playerType.
+         * That said, it's either i scan the whole map for each type, or i
+         * scan all types for each element in the map. So it's equivalent
+         */
+
         playerobjects.insert(playerobjects.end(), obj.begin(), obj.end());
     }
 
@@ -201,7 +207,7 @@ void Level::processRule(const ObjectType& lhs, const ObjectType& rhs)
     {
         rules_.insert({refType, rhs}); // if right part of the rule is an ASPECT, add to the rules
     }
-    else if(rhs > ObjectType::IS)
+    else if(rhs > ObjectType::IS) // ensures != ELEM
     {
         // if not, mutate all tiles from left to right
         // BABA IS WALL => BABA becomes WALL
@@ -216,12 +222,8 @@ void Level::buildRules()
     // 1. clear rules
     rules_.clear();
 
-    //std::cout << "DEBUG | buildRules | Cleared rules" << std::endl;
-
     // 2. get all IS connectors
     const auto is {getAllOfType(ObjectType::IS)};
-
-    //std::cout << "DEBUG | buildRules | Number of IS : " << is.size() << std::endl;
 
     // 3. for each IS, check if horizontal rule exists
     for (const auto& obj : is)
@@ -254,7 +256,6 @@ void Level::buildRules()
 
             if(lhs != ObjectType::IS)
             {
-                //std::cout << "DEBUG | buildRules | Found a LHS : " << lhs << std::endl;
                 its = gamemap_.equal_range(obj.first + dir.second);
                 auto it {its.first};
                 while (it != its.second)
@@ -276,12 +277,6 @@ void Level::buildRules()
             }
         }
     }
-
-    /*
-    for(const auto &truc : rules_)
-    {
-        std::cout << truc.first << " IS " << truc.second << std::endl;
-    }*/
 }
 
 void Level::removeTile(const std::pair<Position, GameObject>& obj)
@@ -289,12 +284,11 @@ void Level::removeTile(const std::pair<Position, GameObject>& obj)
     const auto its {gamemap_.equal_range(obj.first)};
     auto it {its.first};
     while (it != its.second && it->second != obj.second) ++it;
-    gamemap_.erase(it);
+    if(it != its.second) gamemap_.erase(it);
 }
 
 void Level::applyRules()
 {
-
     std::vector<std::pair<Position, GameObject>> playerobjects {getPlayerObjects()};
 
     for (auto &obj : gamemap_)
@@ -306,9 +300,9 @@ void Level::applyRules()
             auto asp {rule->second};
             if(asp == ObjectType::SINK) // FIXME : rearranged the priority, may not work!
             {
-                if(gamemap_.count(obj.first) > 1)
+                if(gamemap_.count(obj.first) > 1) // if there are other elements at that position
                 {
-                    gamemap_.erase(obj.first);
+                    gamemap_.erase(obj.first); // they all disappear
                     return;
                 }
             }
@@ -317,12 +311,12 @@ void Level::applyRules()
             {
                 if(playerObj.first == obj.first)
                 {
-                    if(asp == ObjectType::WIN)
+                    if(asp == ObjectType::WIN) // player-controllable on WIN
                     {
                         isWon_ = true;
                         return;
                     }
-                    else if (asp == ObjectType::KILL) removeTile(playerObj);
+                    else if (asp == ObjectType::KILL) removeTile(playerObj); // player-controllable on KILL
                 }
             }
         }
@@ -331,12 +325,14 @@ void Level::applyRules()
 
 // MOVEMENT
 
-void Level::moveTile(const std::pair<Position, GameObject>& tile, Direction dir)
+void Level::moveTile(const std::pair<Position, GameObject>& tile, const Direction& dir)
 {
     const auto its {gamemap_.equal_range(tile.first)};
     auto it {its.first};
     while (it != its.second && it->second != tile.second) ++it;
     gamemap_.erase(it);
+
+    // FIXME : i should use removeTile, but iterators and pointers make my brain hurt
 
     gamemap_.insert({tile.first + dir, tile.second})->second.setDirection(dir);
 }

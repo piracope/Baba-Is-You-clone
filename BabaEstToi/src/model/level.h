@@ -131,7 +131,7 @@ class Level
      * @param obj the pair (Position, GameObject) to displace
      * @param dir the direction towards which the GameObject will be moved
      */
-    void moveTile(const std::pair<Position, GameObject>& obj, Direction dir); // TODO : change name maybe
+    void moveTile(const std::pair<Position, GameObject>& obj, const Direction& dir); // TODO : change name maybe
 
     /**
      * @brief Checks if a GameObject at a certain position can move in a certain direction
