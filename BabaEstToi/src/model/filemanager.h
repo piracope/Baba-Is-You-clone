@@ -5,11 +5,9 @@
 
 class FileManager
 {
-    inline static const std::string START_OF_PATH {"levels/level_"};
-public: // FIXME : this should be low level file reading, remove "level" abstraction
-    static std::string getLevel(unsigned);
-    static void writeSave(std::string);
-    static std::string readSave(); // TODO : also save lvlNumber
+public:
+    static std::string getFile(std::string);
+    static void writeFile(std::string, std::string);
 };
 
 #endif // FILEMANAGER_H

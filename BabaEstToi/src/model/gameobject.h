@@ -13,8 +13,7 @@ class GameObject
     Direction dir_;
 
 public:
-    GameObject(ObjectType, Categorie, Direction); // TODO : maybe remove this unused constr
-    GameObject(ObjectType, Direction = Direction::RIGHT); //i'm trying out stuff
+    GameObject(ObjectType, Direction = Direction::RIGHT);
     Categorie getCategorie() const;
     ObjectType getType() const;
     Direction getDirection() const;

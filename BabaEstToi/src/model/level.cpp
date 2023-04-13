@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <stdexcept>
 #include <iostream> // TODO : remove before release
+#include <array>
 
 #include "level.h"
 
@@ -269,7 +270,7 @@ void Level::removeTile(const std::pair<Position, GameObject>& obj)
 
 void Level::applyRules()
 {
-    const auto playertypes {getPlayerTypes()};
+    const auto playertypes {getPlayerTypes()}; // TODO : factorize this
 
     if(playertypes.empty()) return;
 
@@ -291,8 +292,7 @@ void Level::applyRules()
             {
                 if(gamemap_.count(obj.first) > 1)
                 {
-                    removeTile(obj); // TODO : can't kill TEXT
-                    removeTile(*gamemap_.find(obj.first));
+                    gamemap_.erase(obj.first);
                     return;
                 }
             }

@@ -11,6 +11,8 @@ namespace model
 
 class Baba : public Subject
 {
+    inline static const std::string START_OF_PATH {"levels/level_"};
+
     unsigned lvlNumber_;
     Level lvl_;
 

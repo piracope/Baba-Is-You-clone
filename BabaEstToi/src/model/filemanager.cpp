@@ -4,14 +4,11 @@
 
 #include "filemanager.h"
 
-std::string FileManager::getLevel(unsigned nb)
+std::string FileManager::getFile(std::string path)
 {
-    std::stringstream path;
-    path << START_OF_PATH << nb << ".txt";
-
     // TODO : use resource from qrc instead
 
-    std::ifstream lvl {path.str()};
+    std::ifstream lvl {path};
     lvl.exceptions(std::ios::failbit); // throws if bad file
 
     std::stringstream ret;
@@ -24,12 +21,9 @@ std::string FileManager::getLevel(unsigned nb)
     return ret.str();
 }
 
-void FileManager::writeSave(std::string lvl)
+void FileManager::writeFile(std::string path, std::string lvl)
 {
-    std::stringstream path;
-    path << START_OF_PATH << "S.txt"; // FIXME : we need to pick something definitive
-
-    std::ofstream save {path.str()};
+    std::ofstream save {path};
     save.exceptions(std::ios::failbit);
 
     save << lvl;
