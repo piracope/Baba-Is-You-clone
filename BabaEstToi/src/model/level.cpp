@@ -355,7 +355,11 @@ bool Level::canMove(const Position& pos, const Direction& dir, bool& updateRules
     // 3. for each GameObject, we check if rules apply to it
     for (auto it {its.first}; it != its.second; ++it)
     {
-        if(it->second.getCategorie() != Category::ELEM) toPush = it;
+        if(it->second.getCategorie() != Category::ELEM)
+        {
+            toPush = it;
+            updateRules = true;
+        }
         else // no rules can apply to a TEXT
         {
             const auto rules {rules_.equal_range(it->second.getType())}; // we get the rules aplied to this type
@@ -423,10 +427,7 @@ void Level::movePlayer(const Direction& dir)
 
     // 4. rebuild the rules
 
-    /* // TODO : REMOVE THE COMMENT BLOCK WHEN IT IS IMPLEMENTED
-     * if(update) buildRules();
-     */
-    buildRules();
+    if(update) buildRules();
 
     // 5. apply the rules
     applyRules();
