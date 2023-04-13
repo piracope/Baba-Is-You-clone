@@ -77,7 +77,7 @@ enum class ObjectType
     /// Removes all GameObjects at its position whenever one touches it
     SINK,
     /// Makes a GameObject player-controllable
-    YOU
+    YOU,
 };
 
 /**
@@ -85,14 +85,14 @@ enum class ObjectType
  */
 enum class Direction
 {
+    /// The horizontally positive (1, 0) direction
+    RIGHT,
     /// The vertically negative (0, -1) direction
     UP,
-    /// The vertically positive (0, 1) direction
-    DOWN,
     /// The horizontally negative (-1, 0) direction
     LEFT,
-    /// The horizontally positive (1, 0) direction
-    RIGHT
+    /// The vertically positive (0, 1) direction
+    DOWN
 };
 
 /**

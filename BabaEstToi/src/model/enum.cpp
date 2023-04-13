@@ -64,7 +64,6 @@ std::ostream & operator<<(std::ostream & out, ObjectType type)
 
 std::ostream & operator<<(std::ostream & out, Direction dir)
 {
-    // TODO : a bit lazy to make it a map fr
     switch(dir)
     {
     case Direction::RIGHT:

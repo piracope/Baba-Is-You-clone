@@ -4,7 +4,6 @@
 #include <map>
 #include <vector>
 #include <unordered_map>
-#include <unordered_set>
 
 #include "gameobject.h"
 
@@ -106,13 +105,13 @@ class Level
     // HELPER METHODS
 
     /**
-     * @brief Gets all player-controllable ObjectTypes
+     * @brief Gets all player-controllable GameObjets and their position on the game board
      *
-     * A player-controllable ObjectType is an ObjectType affected by the IS YOU rule.
+     * A player-controllable GameObject is a GameObject which is affected by the IS YOU rule.
      *
-     * @return all player-controllable ObjectTypes
+     * @return all player-controllable GameObjects and their position
      */
-    std::unordered_set<ObjectType> getPlayerTypes() const;
+    std::vector<std::pair<Position, GameObject>> getPlayerObjects() const;
 
     /**
      * @brief Gets all GameObjects in the level of a certain ObjectType
@@ -154,7 +153,7 @@ class Level
      * @param updateRules a marker set to true if rules need to be update after this move
      * @return true if the movement is valid
      */
-    bool canMove(const Position& pos, const Direction& dir, bool& updateRules); // TODO : handle updateRule
+    bool canMove(const Position& pos, const Direction& dir, bool& updateRules);
 
     /**
      * @brief Changes all GameObjects from one type to another

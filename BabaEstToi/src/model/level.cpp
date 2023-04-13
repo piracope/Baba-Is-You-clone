@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <iostream> // TODO : remove before release
 #include <array>
+#include <unordered_set>
 
 #include "level.h"
 
@@ -140,8 +141,12 @@ Level::Level(const std::string& lvl)
         std::getline(line, tmp2, ' ');
         int y {std::stoi(tmp2)}; // third word -> pos.y
 
-        // TODO : direction
-        gamemap_.insert({{x, y}, type}); // we add a GameObject (implicit constr) at (x, y)
+        int dir = 0;
+        std::getline(line, tmp2, ' ');
+
+        if(!line.eof()) dir = std::stoi(tmp2); // third word, if it exists -> direction
+
+        gamemap_.insert({{x, y}, GameObject{type, Direction{dir}}}); // we add a GameObject (implicit constr) at (x, y)
     }
 
     buildRules();
@@ -150,15 +155,22 @@ Level::Level(const std::string& lvl)
 
 // HELPER METHODS
 
-std::unordered_set<ObjectType> Level::getPlayerTypes() const
+std::vector<std::pair<Position, GameObject>> Level::getPlayerObjects() const
 {
-    std::unordered_set<ObjectType> ret {};
+    std::unordered_set<ObjectType> playertypes {};
     for (const auto& [type, asp] : rules_)
     {
-        if(asp == ObjectType::YOU) ret.insert(type);
+        if(asp == ObjectType::YOU) playertypes.insert(type);
     }
 
-    return ret;
+    std::vector<std::pair<Position, GameObject>> playerobjects {};
+    for (const auto type : playertypes)
+    {
+        const auto obj {getAllOfType(type)};
+        playerobjects.insert(playerobjects.end(), obj.begin(), obj.end());
+    }
+
+    return playerobjects;
 }
 
 std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type) const
@@ -212,7 +224,6 @@ void Level::buildRules()
     //std::cout << "DEBUG | buildRules | Number of IS : " << is.size() << std::endl;
 
     // 3. for each IS, check if horizontal rule exists
-    // TODO : optimization : keep in a set or something the position of every IS
     for (const auto& obj : is)
     {
 
@@ -283,16 +294,8 @@ void Level::removeTile(const std::pair<Position, GameObject>& obj)
 
 void Level::applyRules()
 {
-    const auto playertypes {getPlayerTypes()}; // TODO : factorize this
 
-    if(playertypes.empty()) return;
-
-    std::vector<std::pair<Position, GameObject>> playerobjects {};
-    for (const auto type : playertypes)
-    {
-        const auto obj {getAllOfType(type)};
-        playerobjects.insert(playerobjects.end(), obj.begin(), obj.end());
-    }
+    std::vector<std::pair<Position, GameObject>> playerobjects {getPlayerObjects()};
 
     for (auto &obj : gamemap_)
     {
@@ -335,8 +338,7 @@ void Level::moveTile(const std::pair<Position, GameObject>& tile, Direction dir)
     while (it != its.second && it->second != tile.second) ++it;
     gamemap_.erase(it);
 
-    gamemap_.insert({tile.first + dir, tile.second});
-    // TODO : change GameObject direction
+    gamemap_.insert({tile.first + dir, tile.second})->second.setDirection(dir);
 }
 
 bool Level::canMove(const Position& pos, const Direction& dir, bool& updateRules)
@@ -405,17 +407,8 @@ void Level::movePlayer(const Direction& dir)
     if(isWon_) throw std::logic_error {"Cannot move when game is won."};
 
     // 1. get player controlled types (X IS MOVE)
-    const auto playertypes {getPlayerTypes()};
-
-    if(playertypes.empty()) return;
-
     // 2. for each of those types, get all GameObjects of that type
-    std::vector<std::pair<Position, GameObject>> playerobjects {};
-    for (const auto type : playertypes)
-    {
-        const auto obj {getAllOfType(type)};
-        playerobjects.insert(playerobjects.end(), obj.begin(), obj.end());
-    }
+    std::vector<std::pair<Position, GameObject>> playerobjects {getPlayerObjects()};
 
     bool update = false;
 

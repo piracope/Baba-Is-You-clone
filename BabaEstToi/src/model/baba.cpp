@@ -6,7 +6,7 @@
 namespace model
 {
 
-Baba::Baba() : lvl_ {FileManager::getFile(START_OF_PATH + "0.txt")}, lvlNumber_ {0} // TODO : put back to 0
+Baba::Baba() : lvl_ {FileManager::getFile(START_OF_PATH + "0.txt")}, lvlNumber_ {0}
 {
     notifyObservers();
 }
