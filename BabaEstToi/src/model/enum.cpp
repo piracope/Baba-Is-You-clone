@@ -6,14 +6,14 @@
 namespace model
 {
 
-std::string to_string(Categorie cat)
+std::string to_string(Category cat)
 {
     // FIXME : probably unused
-    const static std::unordered_map<Categorie, std::string> cattostr
+    const static std::unordered_map<Category, std::string> cattostr
     {
-        {Categorie::ELEM, "ELEM"},
-        {Categorie::ASPECT, "ASPECT"},
-        {Categorie::TEXT, "TEXT"},
+        {Category::ELEM, "ELEM"},
+        {Category::ASPECT, "ASPECT"},
+        {Category::TEXT, "TEXT"},
     };
 
     return cattostr.at(cat);
@@ -52,7 +52,7 @@ std::string to_string(ObjectType type)
     return typetostr.at(type);
 }
 
-std::ostream & operator<<(std::ostream & out, Categorie cat)
+std::ostream & operator<<(std::ostream & out, Category cat)
 {
     return out << to_string(cat);
 }

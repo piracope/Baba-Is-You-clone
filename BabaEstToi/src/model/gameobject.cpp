@@ -5,21 +5,17 @@ namespace model
 
 // CONSTRUCTORS
 
-GameObject::GameObject(ObjectType type, Categorie cat, Direction dir)
-    : cat_{cat}, type_{type}, dir_{dir}
-{}
-
 GameObject::GameObject(ObjectType type, Direction dir)
     : type_ {type}, dir_ {dir}
 {
-    if(type < ObjectType::IS) cat_ = Categorie::ELEM;
-    else if(type < ObjectType::KILL) cat_ = Categorie::TEXT;
-    else cat_ = Categorie::ASPECT;
+    if(type < ObjectType::IS) cat_ = Category::ELEM;
+    else if(type < ObjectType::KILL) cat_ = Category::TEXT;
+    else cat_ = Category::ASPECT;
 }
 
 // GETTERS & SETTERS
 
-Categorie GameObject::getCategorie() const { return cat_; }
+Category GameObject::getCategorie() const { return cat_; }
 ObjectType GameObject::getType() const { return type_; }
 Direction GameObject::getDirection() const { return dir_; }
 

@@ -4,7 +4,7 @@
 
 #include "filemanager.h"
 
-std::string FileManager::getFile(std::string path)
+std::string FileManager::getFile(const std::string& path)
 {
     // TODO : use resource from qrc instead
 
@@ -21,11 +21,11 @@ std::string FileManager::getFile(std::string path)
     return ret.str();
 }
 
-void FileManager::writeFile(std::string path, std::string lvl)
+void FileManager::writeFile(const std::string& path, const std::string& text)
 {
-    std::ofstream save {path};
+    std::ofstream save {path, std::ios_base::trunc | std::ios_base::out};
     save.exceptions(std::ios::failbit);
 
-    save << lvl;
+    save << text;
     save.close();
 }

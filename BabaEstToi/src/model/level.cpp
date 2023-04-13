@@ -39,6 +39,11 @@ Position operator+(const Direction dir, const Position& pos)
 }
 
 
+/**
+ * @brief Returns the ObjectType of the same name as a given string
+ * @param type the string to get the type of
+ * @return the type of the same name as type
+ */
 ObjectType strToType(const std::string& type)
 {
     const static std::unordered_map<std::string, ObjectType> strtypemap
@@ -71,6 +76,14 @@ ObjectType strToType(const std::string& type)
     return strtypemap.at(type);
 }
 
+/**
+ * @brief Returns the ObjectType described by a given TEXT ObjectType
+ *
+ * If no such description is found, so if type is not a TEXT type, the sentinel value IS will be returned.
+ *
+ * @param type a TEXT
+ * @return the ObjectType described by type, or IS if it's not found
+ */
 ObjectType getRefType(const ObjectType type)
 {
     const static std::unordered_map<ObjectType, ObjectType> textToRefMap
@@ -97,7 +110,7 @@ ObjectType getRefType(const ObjectType type)
 
 // CONSTRUCTOR
 
-Level::Level(std::string lvl)
+Level::Level(const std::string& lvl)
 {
     std::istringstream str {lvl};
 
@@ -159,7 +172,7 @@ std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type
     return ret;
 }
 
-void Level::mutateAll(const ObjectType from, const ObjectType to)
+void Level::mutateAll(const ObjectType& from, const ObjectType& to)
 {
     for (auto &p : gamemap_)
     {
@@ -167,7 +180,7 @@ void Level::mutateAll(const ObjectType from, const ObjectType to)
     }
 }
 
-void Level::processRule(const ObjectType lhs, const ObjectType rhs)
+void Level::processRule(const ObjectType& lhs, const ObjectType& rhs)
 {
     const auto refType {getRefType(lhs)};
     if(refType == ObjectType::IS) return;
@@ -220,7 +233,7 @@ void Level::buildRules()
             while (it != its.second)
             {
                 // if one of them is a TEXT
-                if(it->second.getCategorie() == Categorie::TEXT)
+                if(it->second.getCategorie() == Category::TEXT)
                 {
                     lhs = it->second.getType(); // we have our left part of the rule
                     it = its.second; // and we exit the loop (literally a break)
@@ -236,7 +249,7 @@ void Level::buildRules()
                 while (it != its.second)
                 {
                     // if one of them is a TEXT or ASPECT
-                    if(it->second.getCategorie() != Categorie::ELEM)
+                    if(it->second.getCategorie() != Category::ELEM)
                     {
                         rhs = it->second.getType(); // we have our right part of the rule
                         it = its.second; // and we exit the loop (literally a break)
@@ -326,7 +339,7 @@ void Level::moveTile(const std::pair<Position, GameObject>& tile, Direction dir)
     // TODO : change GameObject direction
 }
 
-bool Level::canMove(const Position pos, const Direction dir)
+bool Level::canMove(const Position& pos, const Direction& dir, bool& updateRules)
 {
     // 1. if pos + dir is out of bounds, move not allowed
     const Position final {pos + dir};
@@ -342,7 +355,7 @@ bool Level::canMove(const Position pos, const Direction dir)
     // 3. for each GameObject, we check if rules apply to it
     for (auto it {its.first}; it != its.second; ++it)
     {
-        if(it->second.getCategorie() != Categorie::ELEM) toPush = it;
+        if(it->second.getCategorie() != Category::ELEM) toPush = it;
         else // no rules can apply to a TEXT
         {
             const auto rules {rules_.equal_range(it->second.getType())}; // we get the rules aplied to this type
@@ -377,13 +390,13 @@ bool Level::canMove(const Position pos, const Direction dir)
 
     // we need to check if the pushable can be pushed to the end pos
 
-    if(!canMove(final, dir)) return false; // if not, move not allowed
+    if(!canMove(final, dir, updateRules)) return false; // if not, move not allowed
 
     else moveTile(objToPush, dir); // we push the GameObject to its end position
     return true;
 }
 
-void Level::movePlayer(const Direction dir)
+void Level::movePlayer(const Direction& dir)
 {
     if(isWon_) throw std::logic_error {"Cannot move when game is won."};
 
@@ -400,16 +413,21 @@ void Level::movePlayer(const Direction dir)
         playerobjects.insert(playerobjects.end(), obj.begin(), obj.end());
     }
 
+    bool update = false;
+
     // 3. For each GameObject, check if end pos is free, and move it in the gamemap if applicable
     for (const auto& obj : playerobjects)
     {
-        if(canMove(obj.first, dir)) moveTile(obj, dir);
+        if(canMove(obj.first, dir, update)) moveTile(obj, dir);
     }
 
     // 4. rebuild the rules
+
+    /* // TODO : REMOVE THE COMMENT BLOCK WHEN IT IS IMPLEMENTED
+     * if(update) buildRules();
+     */
     buildRules();
 
-    // TODO : only build rules if !ELEM moved
     // 5. apply the rules
     applyRules();
 }
