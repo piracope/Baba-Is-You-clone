@@ -45,10 +45,6 @@ void Baba::load()
     notifyObservers();
 }
 
-void Baba::load() {
-    notifyObservers();
-}
-
 void Baba::move(Direction dir) {
     lvl_.movePlayer(dir);
     if(lvl_.isWon()) {

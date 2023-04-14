@@ -5,7 +5,6 @@ namespace controller
 Controller::Controller():
     baba {model::Baba{}}, view {view::ViewConsole(&baba)}
 {
-    view.update(&baba);
 }
 
 
