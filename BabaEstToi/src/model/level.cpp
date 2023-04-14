@@ -355,8 +355,7 @@ void Level::moveTile(const std::pair<Position, GameObject>& tile, const Directio
     // FIXME : i should use removeTile, but iterators and pointers make my brain hurt
 
     // TODO : UNCOMMENT AFTER VIEW IS FIXED
-    //gamemap_.insert({tile.first + dir, tile.second})->second.setDirection(dir);
-    gamemap_.insert({tile.first + dir, tile.second});
+    gamemap_.insert({tile.first + dir, tile.second})->second.setDirection(dir);
 }
 
 bool Level::canMove(const Position& pos, const Direction& dir, bool& updateRules)
