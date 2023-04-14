@@ -17,7 +17,7 @@ grass 2 13
 grass 2 15
 grass 15 16
 grass 16 16
-text_best 2 2
+best 2 2
 text_flag 11 2
 is 12 2
 win 13 2

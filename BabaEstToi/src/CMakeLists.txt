@@ -2,6 +2,11 @@ cmake_minimum_required(VERSION 3.5)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_AUTORCC ON)
+
+add_custom_target(copy_levels
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/levels ${CMAKE_CURRENT_BINARY_DIR}/levels
+)
 
 add_executable(BabaEstToi
     main.cpp
@@ -20,8 +25,10 @@ add_executable(BabaEstToi
     observer/subject.cpp
     view/view.h
     view/view.cpp
-    ../resources.qrc
 )
 
+add_dependencies(BabaEstToi copy_levels)
+
 install(TARGETS BabaEstToi
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
