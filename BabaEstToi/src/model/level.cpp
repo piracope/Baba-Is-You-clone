@@ -157,7 +157,7 @@ Level::Level(const std::string& lvl)
 
 std::vector<std::pair<Position, GameObject>> Level::getPlayerObjects() const
 {
-    // we get the player-vontrolled types
+    // we get the player-controlled types
     std::unordered_set<ObjectType> playertypes {};
     for (const auto& [type, asp] : rules_)
     {
@@ -206,6 +206,7 @@ void Level::processRule(const ObjectType& lhs, const ObjectType& rhs)
 
     if(rhs >= ObjectType::KILL) // NOTE : KILL is the first ASPECT
     {
+        // FIXME : implement priority -> only inserting KILL if it isn't WIN
         rules_.insert({refType, rhs}); // if right part of the rule is an ASPECT, add to the rules
     }
     else if(rhs > ObjectType::IS) // ensures != ELEM
@@ -353,6 +354,7 @@ void Level::moveTile(const std::pair<Position, GameObject>& tile, const Directio
 
     // FIXME : i should use removeTile, but iterators and pointers make my brain hurt
 
+    // TODO : UNCOMMENT AFTER VIEW IS FIXED
     //gamemap_.insert({tile.first + dir, tile.second})->second.setDirection(dir);
     gamemap_.insert({tile.first + dir, tile.second});
 }

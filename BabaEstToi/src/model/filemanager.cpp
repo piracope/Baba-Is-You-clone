@@ -6,8 +6,6 @@
 
 std::string FileManager::getFile(const std::string& path)
 {
-    // TODO : use resource from qrc instead
-
     std::ifstream lvl {path};
     lvl.exceptions(std::ios::failbit); // throws if bad file
 

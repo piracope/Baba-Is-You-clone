@@ -34,7 +34,7 @@ class Baba : public Subject
      *
      * @param num the level to start's number
      */
-    void createLevel(unsigned nb); // TODO : what to do if no more levels ?
+    void createLevel(unsigned nb);
 
 public:
 
@@ -55,12 +55,12 @@ public:
      *
      * There is at most one save at all times, and it is stored at START_OF_PATH + "S.txt".
      */
-    void save() const; // FIXME : handle lvlNumber
+    void save() const;
 
     /**
      * @brief Loads a previously saved level
      */
-    void load(); // TODO
+    void load();
 
     /**
      * @brief Initiates a move from the player in a given Direction
