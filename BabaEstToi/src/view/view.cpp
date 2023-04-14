@@ -9,7 +9,7 @@ namespace view
 {
 
 ViewConsole::ViewConsole(model::Baba * baba) :
-    baba_ {baba}
+    baba_ {baba} //changer ça doit être le controller
 {
     baba_->registerObserver(this);
     ViewConsole::update(baba);
@@ -18,6 +18,13 @@ ViewConsole::ViewConsole(model::Baba * baba) :
 ViewConsole::~ViewConsole()
 {
     baba_->unregisterObserver(this);
+}
+
+std::string ViewConsole::askLine()
+{
+    std::string line;
+    std::cin >> line;
+    return line;
 }
 
 void typeToCout(std::string type){
@@ -100,10 +107,11 @@ void ViewConsole::update(const Subject * subject)
             //Cut "function"
             int x;
             int y;
+            int d; // for direction
             int step = 0;
             std::string gameObject;
             int end = board.find(' '); // stolen from the internet
-                while (end != -1)
+                while (step != 2)//Changed this because we doesn't know of the line contain a direction or not
                 { // Loop until no delimiter is left in the string.
                     if (step == 0)
                     {
@@ -119,15 +127,23 @@ void ViewConsole::update(const Subject * subject)
                    end = board.find(' ');
                 }
             // This step is put there because in the while loop it does not do the last iteration
-            // BUG : adding direction makes everything break as y is not necessarily the last element!!!!
-            // This is also needlessly complicated i think. Level::Level does literally the same thing, so why not just copy-paste
-            y = std::stoi(board.substr(0, end));
-            ++step;
+            if (board.length() > 1)//should fix the direction bug (I hope)
+            {
+                y = std::stoi(board.substr(0, end));
+                ++step;
+                board.erase(board.begin(), board.begin() + end + 1);
+                end = board.find(' ');
+                d = std::stoi(board.substr(0, end));
+                ++step;
+            }
+            else
+            {
+                y = std::stoi(board.substr(0, end));
+                ++step;
+            }
             //end of the cut "function"
 
-            //std::cout << gameObject << x << y <<std::endl;
             list.insert_or_assign(model::Position{x,y},gameObject);
-            //std::cout<<board<<std::endl;
         }
     }
     auto it = list.begin();

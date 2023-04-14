@@ -25,6 +25,8 @@ add_executable(BabaEstToi
     observer/subject.cpp
     view/view.h
     view/view.cpp
+    controller/controller.h
+    controller/controller.cpp
 )
 
 add_dependencies(BabaEstToi copy_levels)
