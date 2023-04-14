@@ -42,7 +42,7 @@ void Controller::play()
         {
             this->baba.restart();
         }
-        std::string line = view.askLine();
+        line = view.askLine();
     }
 }
 }

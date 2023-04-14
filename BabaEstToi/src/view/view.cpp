@@ -97,10 +97,11 @@ void ViewConsole::update(const Subject * subject)
             //Cut "function"
             int x;
             int y;
+            int d; // for direction
             int step = 0;
             std::string gameObject;
             int end = board.find(' '); // stolen from the internet
-                while (end != -1)
+                while (step != 2)//Changed this because we doesn't know of the line contain a direction or not
                 { // Loop until no delimiter is left in the string.
                     if (step == 0)
                     {
@@ -116,13 +117,23 @@ void ViewConsole::update(const Subject * subject)
                    end = board.find(' ');
                 }
             // This step is put there because in the while loop it does not do the last iteration
-            y = std::stoi(board.substr(0, end));
-            ++step;
+            if (board.length() > 1)//should fix the direction bug (I hope)
+            {
+                y = std::stoi(board.substr(0, end));
+                ++step;
+                board.erase(board.begin(), board.begin() + end + 1);
+                end = board.find(' ');
+                d = std::stoi(board.substr(0, end));
+                ++step;
+            }
+            else
+            {
+                y = std::stoi(board.substr(0, end));
+                ++step;
+            }
             //end of the cut "function"
 
-            //std::cout << gameObject << x << y <<std::endl;
             list.insert_or_assign(model::Position{x,y},gameObject);
-            //std::cout<<board<<std::endl;
         }
     }
     auto it = list.begin();
