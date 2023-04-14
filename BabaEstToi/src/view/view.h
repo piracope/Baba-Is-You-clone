@@ -5,7 +5,7 @@
 #include "../model/baba.h"
 
 namespace view
-{//retirer namesapce
+{ // TODO : document view
 
 class ViewConsole : public Observer
 {
