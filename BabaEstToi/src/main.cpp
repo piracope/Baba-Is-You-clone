@@ -41,6 +41,17 @@ int main()
             }
 
         }
+        else if(line == "load")
+        {
+            try {
+                baba.load();
+            } catch (const std::ios_base::failure) {
+                std::cerr << "No save file!" << std::endl;
+            } catch(...) {
+                std::cerr << "Bad save file!" << std::endl;
+            }
+
+        }
         cin >> line;
     }
     return 0;

@@ -28,16 +28,33 @@ void Baba::save() const
     FileManager::writeFile(START_OF_PATH + "S.txt", savefile.str());
 }
 
+void Baba::load()
+{
+    std::istringstream savefile {FileManager::getFile(START_OF_PATH + "S.txt")};
+    std::string lvl;
+    savefile >> lvlNumber_; // first line : number
+    savefile.ignore(99999, '\n'); // we go to the next line
+
+    // thanks ChatGPT
+    std::string line;
+    while (std::getline(savefile, line)) {
+        lvl += line + "\n"; // we construct the level string
+    }
+
+    lvl_ = lvl; // and we pass that to the constr
+    notifyObservers();
+}
+
 void Baba::move(Direction dir) {
     lvl_.movePlayer(dir);
     if(lvl_.isWon()) {
         try {
             createLevel(lvlNumber_ + 1);
         } catch (const std::ios_base::failure&) {
-            createLevel(0);
+            createLevel(0); // we go back to first level when won
         }
     }
-    notifyObservers();
+    else notifyObservers();
 }
 
 // GETTERS
