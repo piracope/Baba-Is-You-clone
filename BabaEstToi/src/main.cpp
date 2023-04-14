@@ -27,6 +27,20 @@ int main()
         {
             baba.move(model::Direction::RIGHT);
         }
+        else if(line == "restart")
+        {
+            baba.restart();
+        }
+        else if(line == "save")
+        {
+            try {
+                baba.save();
+                std::cout << "Saved!" << std::endl;
+            } catch (...) {
+                std::cerr << "Couldn't save." << std::endl;
+            }
+
+        }
         cin >> line;
     }
     return 0;

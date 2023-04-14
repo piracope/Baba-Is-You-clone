@@ -6,7 +6,7 @@
 namespace model
 {
 
-Baba::Baba() : lvl_ {FileManager::getFile(START_OF_PATH + "3.txt")}, lvlNumber_ {0}
+Baba::Baba() : lvl_ {FileManager::getFile(START_OF_PATH + "0.txt")}, lvlNumber_ {0}
 {
     notifyObservers();
 }
@@ -21,7 +21,12 @@ void Baba::createLevel(unsigned nb)
 }
 
 void Baba::restart() { createLevel(lvlNumber_); }
-void Baba::save() const { FileManager::writeFile(START_OF_PATH + "S.txt", lvl_.getState());}
+void Baba::save() const
+{
+    std::stringstream savefile;
+    savefile << lvlNumber_ << "\n" << lvl_.getState();
+    FileManager::writeFile(START_OF_PATH + "S.txt", savefile.str());
+}
 
 void Baba::move(Direction dir) {
     lvl_.movePlayer(dir);
