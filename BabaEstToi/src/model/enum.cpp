@@ -46,6 +46,7 @@ std::string to_string(ObjectType type)
         {ObjectType::STOP, "STOP"},
         {ObjectType::WIN, "WIN"},
         {ObjectType::SINK, "SINK"},
+        {ObjectType::BEST, "BEST"},
         {ObjectType::YOU, "YOU"}
     };
 

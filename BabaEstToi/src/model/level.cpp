@@ -70,6 +70,7 @@ ObjectType strToType(const std::string& type)
         {"STOP", ObjectType::STOP},
         {"WIN", ObjectType::WIN},
         {"SINK", ObjectType::SINK},
+        {"BEST", ObjectType::BEST},
         {"YOU", ObjectType::YOU}
     };
 
@@ -291,22 +292,35 @@ void Level::applyRules()
 {
     std::vector<std::pair<Position, GameObject>> playerobjects {getPlayerObjects()};
 
-    for (auto &obj : gamemap_)
+    std::vector<std::pair<Position, GameObject>> toRemove {};
+
+    for (const auto &obj : gamemap_)
     {
-        // FIXME : nested ifs -> decompose
-        const auto rules {rules_.equal_range(obj.second.getType())}; // we get the rules aplied to this type
-        for (auto rule {rules.first}; rule != rules.second; ++rule) // for each of them
+        // if there are no rules, no point going further
+        if(!rules_.contains(obj.second.getType())) continue;
+        // FIXME : is continue/break alright with the teacher ?
+
+        const auto asp {rules_.at(obj.second.getType())};
+        if(asp == ObjectType::SINK)
         {
-            auto asp {rule->second};
-            if(asp == ObjectType::SINK) // FIXME : rearranged the priority, may not work!
-            {
-                if(gamemap_.count(obj.first) > 1) // if there are other elements at that position
-                {
-                    gamemap_.erase(obj.first); // they all disappear
-                    return;
-                }
+            // We need to loop through all elements just to make sure we aren't deleting a non-ELEM
+
+            const auto its {gamemap_.equal_range(obj.first)};
+            auto it {its.first};
+            unsigned nb {0};
+            bool shouldErase {true};
+            while(it != its.second) {
+                if (it->second.getCategorie() != Category::ELEM) shouldErase = false; // DON'T make the tile disappear if there's an !ELEM
+                // !ELEM cannot disappear!!
+                nb++;
+                it++;
             }
 
+            if(shouldErase && nb > 1) { // add to the death row only if the conditions are met
+                toRemove.insert(toRemove.end(), its.first, its.second);
+            }
+        }
+        else { // except SINK, we need to find if a pleyr is on it
             for(const auto& playerObj : playerobjects)
             {
                 if(playerObj.first == obj.first)
@@ -316,10 +330,15 @@ void Level::applyRules()
                         isWon_ = true;
                         return;
                     }
-                    else if (asp == ObjectType::KILL) removeTile(playerObj); // player-controllable on KILL
+                    else if (asp == ObjectType::KILL) toRemove.push_back(playerObj); // player-controllable on KILL
                 }
             }
         }
+    }
+
+    for(auto& byebye : toRemove) // at last, we remove everyone that needs to be removed
+    {
+        removeTile(byebye);
     }
 }
 
@@ -334,7 +353,8 @@ void Level::moveTile(const std::pair<Position, GameObject>& tile, const Directio
 
     // FIXME : i should use removeTile, but iterators and pointers make my brain hurt
 
-    gamemap_.insert({tile.first + dir, tile.second})->second.setDirection(dir);
+    //gamemap_.insert({tile.first + dir, tile.second})->second.setDirection(dir);
+    gamemap_.insert({tile.first + dir, tile.second});
 }
 
 bool Level::canMove(const Position& pos, const Direction& dir, bool& updateRules)

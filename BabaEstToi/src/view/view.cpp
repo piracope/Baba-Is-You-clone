@@ -34,6 +34,8 @@ void typeToCout(std::string type){
         std::cout << std::setw(6) << "GRASS";
     } else if (type == "WATER"){
         std::cout << std::setw(6) << "WATER";
+    } else if (type == "BEST"){
+        std::cout << std::setw(6) << "BEST";
     } else if (type == "BABA"){
         std::cout << std::setw(6) << "BABA";
     }  else if (type == "IS"){

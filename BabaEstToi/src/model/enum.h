@@ -76,6 +76,8 @@ enum class ObjectType
     WIN,
     /// Removes all GameObjects at its position whenever one touches it
     SINK,
+    /// Makes things the best things ever :D
+    BEST,
     /// Makes a GameObject player-controllable
     YOU,
 };
