@@ -31,11 +31,30 @@ void Controller::play()
         }
         else if(line == "save")
         {
-            this->baba.save();
+            try
+            {
+                this->baba.save();
+            }
+            catch(const std::ios_base::failure&)
+            {
+                // TODO : print error --> coulnd't write
+            }
+
         }
         else if(line == "load")
         {
-            this->baba.load();
+            try
+            {
+                this->baba.load();
+            }
+            catch(const std::ios_base::failure&)
+            {
+                // TODO : print error --> couldn't find save
+            }
+            catch (...)
+            {
+                // TODO: print error --> couldn't process save file
+            }
         }
         else if(line == "r")
         {
