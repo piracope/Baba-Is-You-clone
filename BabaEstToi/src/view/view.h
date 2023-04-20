@@ -15,6 +15,7 @@ public:
     ~ViewConsole();
     void update(const Subject * subject) override;
     std::string askLine();
+    void printError(const std::string);
 };
 }
 #endif // VIEW_H

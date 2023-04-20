@@ -39,6 +39,15 @@ std::string ViewConsole::askLine()
 }
 
 /**
+ * @brief print an error
+ * @param e the error to print
+ */
+void ViewConsole::printError(const std::string e)
+{
+    std::cout << e << std::endl;
+}
+
+/**
  * @brief convert a type to the right string to display
  * @param type to convert
  */

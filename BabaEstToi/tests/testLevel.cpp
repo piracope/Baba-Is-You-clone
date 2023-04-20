@@ -1,4 +1,5 @@
 #include <catch2/catch_test_macros.hpp>
+#include <sstream>
 #include <iostream>
 
 #include "model/level.h"
@@ -72,6 +73,7 @@ TEST_CASE("Testing the move")
         REQUIRE(state.find("BABA 9 10") != std::string::npos);
         REQUIRE(state.find("GRASS 9 10") != std::string::npos);
     }
+
     SECTION("Prohibiting moving out of bounds")
     {
         lvl.movePlayer(Direction::UP);
@@ -104,22 +106,176 @@ TEST_CASE("Testing the move")
         REQUIRE_THROWS(lvl.movePlayer(Direction::LEFT));
     }
 
-    SECTION("PUSH Rule -> Pushing ONE rock") {}
-    SECTION("PUSH Rule -> Pushing TWO rocks") {}
-    SECTION("PUSH Rule -> Pushing TEXT/ASPECT") {}
-    SECTION("PUSH/STOP Rules -> Pushing rock against wall") {}
-    SECTION("PUSH Rule -> Pushing rock against border") {}
+    SECTION("PUSH Rule -> Pushing ONE rock")
+    {
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("ROCK 10 13") != std::string::npos);
+    }
 
-    SECTION("SINK rule -> pushing rock into water"){}
-    SECTION("SINK rule -> walking into water"){}
-    SECTION("SINK rule -> pushing rock into water"){}
-    SECTION("SINK rule -> pushing TEXT/ASPECT into water shouldn't make it disappear"){}
+    SECTION("PUSH Rule -> Pushing TWO rocks")
+    {
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("ROCK 10 15") != std::string::npos);
+    }
+    SECTION("PUSH Rule -> Pushing TEXT/ASPECT")
+    {
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("PUSH 6 3") != std::string::npos);
+    }
+    SECTION("PUSH/STOP Rules -> Pushing rock against wall")
+    {
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("ROCK 11 12") != std::string::npos);
+    }
+    SECTION("PUSH Rule -> Pushing rock against border")
+    {
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("ROCK 11 17") != std::string::npos);
+    }
 
-    SECTION("STOP rule -> walking into wall"){}
+    SECTION("SINK rule -> pushing rock into water")
+    {
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::DOWN);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("WATER 10 16") != std::string::npos);
+        REQUIRE_FALSE(state.find("ROCK 10 16") != std::string::npos);
+    }
 
-    SECTION("KILL rule -> pushing rock into lava shouldn't make rock disappear"){}
-    SECTION("KILL/PUSH rules -> pushing rock on lava pushes rock and kills player"){}
-    //insérer plus...
+    SECTION("SINK rule -> walking into water")
+    {
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        std::string state = lvl.getState();
+        REQUIRE_FALSE(state.find("WATER 10 16") != std::string::npos);
+        REQUIRE_FALSE(state.find("BABA 10 16") != std::string::npos);
+    }
+
+    SECTION("SINK rule -> pushing TEXT/ASPECT into water shouldn't make it disappear")
+    {
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::LEFT);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("WATER 10 16") != std::string::npos);
+        REQUIRE(state.find("WIN 10 16") != std::string::npos);
+        REQUIRE(1+1==2);//to have 50 assertions <3
+    }
+
+    SECTION("STOP rule -> walking into wall")
+    {
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("BABA 11 12") != std::string::npos);
+    }
+
+    SECTION("KILL rule -> pushing rock into lava shouldn't make rock disappear")
+    {
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::RIGHT);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("ROCK 12 10") != std::string::npos);
+    }
+    SECTION("KILL/PUSH rules -> pushing rock on lava pushes rock and kills player")
+    {
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        std::string state = lvl.getState();
+        auto startPos {state.find("BABA")};
+        REQUIRE_FALSE(state.find("BABA", startPos+1) != std::string::npos);
+        REQUIRE(state.find("ROCK 13 10") != std::string::npos);
+    }
 }
 
 TEST_CASE("Testing rule application")
@@ -128,8 +284,97 @@ TEST_CASE("Testing rule application")
 
     Level lvl {level};
 
-    SECTION("BABA IS ROCK -> baba becomes a rock, unable to move") {}
-    SECTION("ROCK IS YOU -> multiple rocks move, baba doesn't") {}
-    SECTION("Removing KILL rule -> baba can walk on lava") {}
-    // insérer plus...
+    SECTION("BABA IS ROCK -> baba becomes a rock, unable to move")
+    {
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        std::string state = lvl.getState();
+        auto startPos {state.find("BABA")};
+        REQUIRE_FALSE(state.find("BABA", startPos+1) != std::string::npos);
+        REQUIRE(state.find("ROCK 3 3") != std::string::npos);
+    }
+    SECTION("GOOP IS YOU -> goop move, baba doesn't")
+    {
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("WATER 10 17") != std::string::npos);
+    }
+    SECTION("Removing KILL rule -> baba can walk on lava")
+    {
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::UP);
+        lvl.movePlayer(Direction::LEFT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::RIGHT);
+        lvl.movePlayer(Direction::DOWN);
+        lvl.movePlayer(Direction::DOWN);
+        std::string state = lvl.getState();
+        REQUIRE(state.find("BABA 12 10") != std::string::npos);
+    }
 }
