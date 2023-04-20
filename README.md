@@ -94,7 +94,8 @@ Une surcharge d'opérateur ont été ajoutés pour comparer un GameObject
 * Lors de la construction des règles, pour un même type d'objets, c'est
 le dernier aspect de règle qui prime. Pourtant, la règle réellement
 appliquée dépend d'un sens de priorité. WIN l'emporte sur KILL, qui
-l'emporte sur SINK. Il serait donc intéressant d'implémenter une version plus déterministe de la construction des règles.
+l'emporte sur SINK. Il serait donc intéressant d'implémenter une version plus
+déterministe de la construction des règles.
 
 * L'utilisation d'une multimap étant beaucoup plus obscure que prévu,
 il serait intéressant d'envisager de refactoriser le code pour utiliser
@@ -106,6 +107,14 @@ donnée dans un fichier de configuration, tel qu'un .env ou un
 config.properties comme vu en ATLG4.
 
 * Le code pourrait être factorisé un peu plus.
+
+* L'affichage de plusieurs éléments sur une même position est non déterministe.
+L'état du jeu que reçoit la vue est construit en itérant dans la map contenant
+les éléments du jeu. Rien ne garantit l'ordre dans lequel se trouveront les éléments
+au sein d'une position. Ainsi, des objets ayant moins d'importance pour le joueur
+se retrouveraient cachés. On pourrait coder en dur une priorité dans la vue...
+ou s'assurer que la vue graphique ait des sprites transparents, ce qui réglerait
+le problème.
 
 ## Auteurs
 
