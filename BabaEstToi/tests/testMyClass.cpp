@@ -1,15 +1,25 @@
-/*
+#define CATCH_CONFIG_MAIN
 #include <catch2/catch_test_macros.hpp>
-#include "MyClass.h"
 
 TEST_CASE( "Test of MyClass") {
-    MyClass myClass;
 
     SECTION("Sum"){
-        REQUIRE(myClass.sum(2,2) == 4);
-    }
-    SECTION("Wrong Sum"){
-        REQUIRE_FALSE(myClass.sum(2,2) == 5);
+        REQUIRE(1+1==2);
     }
 }
-*/
+
+/*SCENARIO("test")
+{
+    GIVEN("a level with baba is you")
+    {
+        std::string s {"5 5\nwall 2 2\nbaba 0 2 3\ntext_baba 0 3\nis 1 3\nyou 2 3\n"};
+        model::Level level{s};
+        WHEN("a valid move")
+        {
+            THEN("move")
+            {
+                REQUIRE_NOTHROW(level.movePlayer(model::Direction::RIGHT));
+            }
+        }
+    }
+}*/

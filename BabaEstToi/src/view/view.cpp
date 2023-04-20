@@ -8,6 +8,10 @@
 namespace view
 {
 
+/**
+ * @brief Make the view console
+ * @param baba the model
+ */
 ViewConsole::ViewConsole(model::Baba * baba) :
     baba_ {baba} //changer ça doit être le controller
 {
@@ -15,11 +19,18 @@ ViewConsole::ViewConsole(model::Baba * baba) :
     ViewConsole::update(baba);
 }
 
+/**
+ * @brief Destructor of the view makes the model forget
+ */
 ViewConsole::~ViewConsole()
 {
     baba_->unregisterObserver(this);
 }
 
+/**
+ * @brief take the input of the player
+ * @return the input of the player
+ */
 std::string ViewConsole::askLine()
 {
     std::string line;
@@ -27,6 +38,10 @@ std::string ViewConsole::askLine()
     return line;
 }
 
+/**
+ * @brief convert a type to the right string to display
+ * @param type to convert
+ */
 void typeToCout(std::string type){
 
     if (type == "WALL"){
@@ -82,6 +97,10 @@ void typeToCout(std::string type){
     //std::cout << std::setw(6) << type;
 }
 
+/**
+ * @brief update the view of the game by reading the state of the game
+ * @param subject the model
+ */
 void ViewConsole::update(const Subject * subject)
 {
     //std::cout<<baba_->getState()<<std::endl;
