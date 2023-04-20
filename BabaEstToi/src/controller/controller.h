@@ -3,7 +3,7 @@
 
 #include "../model/baba.h"
 #include "../view/view.h"
-
+// TODO : document controller
 namespace controller
 {
 class Controller
