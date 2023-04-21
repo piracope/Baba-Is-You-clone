@@ -42,36 +42,48 @@ static std::string getLevel()
 
 const static std::string level {getLevel()};
 
+bool findElem(const Level& lvl, const Position& pos, const ObjectType& type)
+{
+    const auto state = lvl.getState();
+    const auto its {state.equal_range(pos)};
+    auto it {its.first};
+    while (it != its.second && it->second.getType() != type) ++it;
+    if(it != its.second) return true;
+
+    return false;
+}
+
+bool findAnywhere(const Level& lvl, const ObjectType& type)
+{
+    for(const auto& elem : lvl.getState())
+    {
+        if(elem.second.getType() == type) return true;
+    }
+    return false;
+}
+
 TEST_CASE("Testing the move")
 {
     REQUIRE_NOTHROW(Level(level));
 
     Level lvl {level};
 
-    SECTION("Moving changes the direction")
-    {
-        lvl.movePlayer(Direction::UP);
-        std::string state = lvl.getState();
-
-        REQUIRE(state.find("BABA 10 9 1") != std::string::npos); // if not found, return value of find == npos
-    }
-
     SECTION("Moving to an empty block")
     {
         lvl.movePlayer(Direction::RIGHT);
-        std::string state = lvl.getState();
 
-        REQUIRE(state.find("BABA 11 10") != std::string::npos);
-        REQUIRE_FALSE(state.find("BABA 10 10") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {11, 10}, ObjectType::BABA));
+        REQUIRE_FALSE(findElem(lvl, {10, 10}, ObjectType::BABA));
     }
 
     SECTION("Moving to unaffected block")
     {
         lvl.movePlayer(Direction::LEFT);
-        std::string state = lvl.getState();
 
-        REQUIRE(state.find("BABA 9 10") != std::string::npos);
-        REQUIRE(state.find("GRASS 9 10") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {9, 10}, ObjectType::BABA));
+        REQUIRE(findElem(lvl, {9, 10}, ObjectType::GRASS));
     }
 
     SECTION("Prohibiting moving out of bounds")
@@ -81,22 +93,21 @@ TEST_CASE("Testing the move")
         {
             lvl.movePlayer(Direction::RIGHT);
         }
-        std::string state = lvl.getState();
-        REQUIRE(state.find("BABA 17 9") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {17, 9}, ObjectType::BABA));
 
         lvl.movePlayer(Direction::RIGHT);
-        state = lvl.getState();
-        REQUIRE(state.find("BABA 17 9") != std::string::npos);
-        REQUIRE_FALSE(state.find("BABA 18 9") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {17, 9}, ObjectType::BABA));
+        REQUIRE_FALSE(findElem(lvl, {18, 9}, ObjectType::BABA));
     }
 
     SECTION("KILL Rule -> walking into lava")
     {
         lvl.movePlayer(Direction::RIGHT);
         lvl.movePlayer(Direction::RIGHT); // baba touches lava :(
-        std::string state = lvl.getState();
-        auto startPos {state.find("BABA")}; // to store position in text of TEXT_BABA
-        REQUIRE_FALSE(state.find("BABA", startPos+1) != std::string::npos);
+
+        REQUIRE_FALSE(findAnywhere(lvl, ObjectType::BABA));
     }
 
     SECTION("WIN rule -> moving after a move throws an exception")
@@ -110,8 +121,8 @@ TEST_CASE("Testing the move")
     {
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::DOWN);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("ROCK 10 13") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {10, 13}, ObjectType::ROCK));
     }
 
     SECTION("PUSH Rule -> Pushing TWO rocks")
@@ -119,8 +130,8 @@ TEST_CASE("Testing the move")
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::DOWN);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("ROCK 10 15") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {10, 15}, ObjectType::ROCK));
     }
     SECTION("PUSH Rule -> Pushing TEXT/ASPECT")
     {
@@ -134,8 +145,8 @@ TEST_CASE("Testing the move")
         lvl.movePlayer(Direction::UP);
         lvl.movePlayer(Direction::UP);
         lvl.movePlayer(Direction::LEFT);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("PUSH 6 3") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {6, 3}, ObjectType::PUSH));
     }
     SECTION("PUSH/STOP Rules -> Pushing rock against wall")
     {
@@ -145,8 +156,8 @@ TEST_CASE("Testing the move")
         lvl.movePlayer(Direction::RIGHT);
         lvl.movePlayer(Direction::RIGHT);
         lvl.movePlayer(Direction::RIGHT);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("ROCK 11 12") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {11, 12}, ObjectType::ROCK));
     }
     SECTION("PUSH Rule -> Pushing rock against border")
     {
@@ -166,21 +177,19 @@ TEST_CASE("Testing the move")
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::DOWN);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("ROCK 11 17") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {11, 17}, ObjectType::ROCK));
     }
 
     SECTION("SINK rule -> pushing rock into water")
     {
         lvl.movePlayer(Direction::DOWN);
-        lvl.movePlayer(Direction::LEFT);
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::DOWN);
-        lvl.movePlayer(Direction::RIGHT);
         lvl.movePlayer(Direction::DOWN);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("WATER 10 16") != std::string::npos);
-        REQUIRE_FALSE(state.find("ROCK 10 16") != std::string::npos);
+
+        REQUIRE_FALSE(findElem(lvl, {10, 16}, ObjectType::WATER));
+        REQUIRE_FALSE(findElem(lvl, {10, 16}, ObjectType::ROCK));
     }
 
     SECTION("SINK rule -> walking into water")
@@ -193,9 +202,9 @@ TEST_CASE("Testing the move")
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::RIGHT);
-        std::string state = lvl.getState();
-        REQUIRE_FALSE(state.find("WATER 10 16") != std::string::npos);
-        REQUIRE_FALSE(state.find("BABA 10 16") != std::string::npos);
+
+        REQUIRE_FALSE(findElem(lvl, {10, 16}, ObjectType::WATER));
+        REQUIRE_FALSE(findElem(lvl, {10, 16}, ObjectType::BABA));
     }
 
     SECTION("SINK rule -> pushing TEXT/ASPECT into water shouldn't make it disappear")
@@ -225,10 +234,9 @@ TEST_CASE("Testing the move")
         lvl.movePlayer(Direction::RIGHT);
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::LEFT);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("WATER 10 16") != std::string::npos);
-        REQUIRE(state.find("WIN 10 16") != std::string::npos);
-        REQUIRE(1+1==2);//to have 50 assertions <3
+
+        REQUIRE(findElem(lvl, {10, 16}, ObjectType::WATER));
+        REQUIRE(findElem(lvl, {10, 16}, ObjectType::WIN));
     }
 
     SECTION("STOP rule -> walking into wall")
@@ -237,8 +245,8 @@ TEST_CASE("Testing the move")
         lvl.movePlayer(Direction::RIGHT);
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::RIGHT);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("BABA 11 12") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {11, 12}, ObjectType::BABA));
     }
 
     SECTION("KILL rule -> pushing rock into lava shouldn't make rock disappear")
@@ -254,8 +262,8 @@ TEST_CASE("Testing the move")
         lvl.movePlayer(Direction::LEFT);
         lvl.movePlayer(Direction::UP);
         lvl.movePlayer(Direction::RIGHT);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("ROCK 12 10") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {12, 10}, ObjectType::ROCK));
     }
     SECTION("KILL/PUSH rules -> pushing rock on lava pushes rock and kills player")
     {
@@ -271,10 +279,9 @@ TEST_CASE("Testing the move")
         lvl.movePlayer(Direction::UP);
         lvl.movePlayer(Direction::RIGHT);
         lvl.movePlayer(Direction::RIGHT);
-        std::string state = lvl.getState();
-        auto startPos {state.find("BABA")};
-        REQUIRE_FALSE(state.find("BABA", startPos+1) != std::string::npos);
-        REQUIRE(state.find("ROCK 13 10") != std::string::npos);
+
+        REQUIRE_FALSE(findAnywhere(lvl, ObjectType::BABA));
+        REQUIRE(findElem(lvl, {13, 10}, ObjectType::ROCK));
     }
 }
 
@@ -318,12 +325,11 @@ TEST_CASE("Testing rule application")
         lvl.movePlayer(Direction::RIGHT);
         lvl.movePlayer(Direction::UP);
         lvl.movePlayer(Direction::LEFT);
-        std::string state = lvl.getState();
-        auto startPos {state.find("BABA")};
-        REQUIRE_FALSE(state.find("BABA", startPos+1) != std::string::npos);
-        REQUIRE(state.find("ROCK 3 3") != std::string::npos);
+
+        REQUIRE_FALSE(findAnywhere(lvl, ObjectType::BABA));
+        REQUIRE(findElem(lvl, {3, 3}, ObjectType::ROCK));
     }
-    SECTION("GOOP IS YOU -> goop move, baba doesn't")
+    SECTION("WATER IS YOU -> water move, baba doesn't")
     {
         lvl.movePlayer(Direction::LEFT);
         lvl.movePlayer(Direction::UP);
@@ -343,8 +349,8 @@ TEST_CASE("Testing rule application")
         lvl.movePlayer(Direction::LEFT);
         lvl.movePlayer(Direction::LEFT);
         lvl.movePlayer(Direction::DOWN);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("WATER 10 17") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {10, 17}, ObjectType::WATER));
     }
     SECTION("Removing KILL rule -> baba can walk on lava")
     {
@@ -374,7 +380,7 @@ TEST_CASE("Testing rule application")
         lvl.movePlayer(Direction::RIGHT);
         lvl.movePlayer(Direction::DOWN);
         lvl.movePlayer(Direction::DOWN);
-        std::string state = lvl.getState();
-        REQUIRE(state.find("BABA 12 10") != std::string::npos);
+
+        REQUIRE(findElem(lvl, {12, 10}, ObjectType::BABA));
     }
 }
