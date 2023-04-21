@@ -75,9 +75,23 @@ void ViewConsole::update(const Subject * subject)
     {
         for (int x {0}; x < width; x++)
         {
-            auto toShow {map.find({x, y})};
-            if(toShow != map.end())
+            auto range {map.equal_range({x, y})};
+
+
+            if(range.first != range.second)
             {
+                /*
+                 * NOTE : display the last element at a given pos. Beware that this does not mean
+                 * that the last element in the map at that position REALLY IS the last element ADDED,
+                 * as multimap DOES NOT guarantee the order.
+                 */
+                auto temp {range.first};
+                decltype(temp) toShow;
+                while(temp != range.second)
+                {
+                    toShow = temp;
+                    temp++;
+                }
                 typeToCout(model::to_string(toShow->second.getType()));
             }
             else
