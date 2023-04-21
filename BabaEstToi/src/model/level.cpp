@@ -207,21 +207,21 @@ void Level::processRule(const ObjectType& lhs, const ObjectType& rhs)
     if(rhs >= ObjectType::KILL) // NOTE : KILL is the first ASPECT
     {
 
+        // TODO : implement priority -> only inserting KILL if it isn't WIN
+
+        /*
+         * YOU can exist in coexistence with anything
+         * WIN is stronger than SINK, which is stronger than KILL
+         *
+         * PUSH is stronger than STOP
+         */
+
         rules_.insert({refType, rhs}); // if right part of the rule is an ASPECT, add to the rules
     }
     else if(rhs > ObjectType::IS) // ensures != ELEM
     {
         // if not, mutate all tiles from left to right
         // BABA IS WALL => BABA becomes WALL
-
-        // TODO : implement priority -> only inserting KILL if it isn't WIN
-
-        /*
-             * YOU can exist in coexistence with anything
-             * WIN is stronger than SINK, which is stronger than KILL
-             *
-             * PUSH is stronger than STOP
-             */
 
         const auto refTypeRight {getRefType(rhs)};
         if(refTypeRight != ObjectType::IS) mutateAll(refType, refTypeRight);
