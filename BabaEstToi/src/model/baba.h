@@ -36,6 +36,13 @@ class Baba : public Subject
      */
     void createLevel(unsigned nb);
 
+    /**
+     * @brief Creates a text representation of a level's map
+     * @param gamemap the level's map
+     * @return a text representation of a level's map
+     */
+    std::string buildLevelFromMap(const std::multimap<Position, GameObject> &gamemap) const;
+
 public:
 
     /**
@@ -72,11 +79,9 @@ public:
     /**
      * @brief Fetches the currently playing level's state
      *
-     * The level's state is formatted in the same way as the levels files.
-     *
-     * @return a text-based representation of the current level's state
+     * @return the currently playing level's gamemap
      */
-    std::string getState() const;
+    std::multimap<Position, GameObject> getState() const;
 
     /**
      * @brief Returns the dimensions of the currently playing level.

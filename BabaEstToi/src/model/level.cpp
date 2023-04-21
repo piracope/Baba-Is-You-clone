@@ -449,18 +449,9 @@ void Level::movePlayer(const Direction& dir)
 
 // GETTERS
 
-std::string Level::getState() const
+std::multimap<Position, GameObject> Level::getState() const
 {
-    std::ostringstream ret {};
-    ret << width_ << ' ' << height_ << std::endl; // first line - dimensions
-    for (const auto& [pos, obj] : gamemap_)
-    {
-        ret << obj << ' ' << pos.x << ' ' << pos.y;
-        if (obj.getDirection() != Direction::RIGHT) ret << ' ' << obj.getDirection();
-        ret << std::endl;
-    }
-
-    return ret.str();
+    return gamemap_;
 }
 
 bool Level::isWon() const { return isWon_; }

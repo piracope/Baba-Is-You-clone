@@ -222,13 +222,11 @@ public:
     void movePlayer(const Direction& dir);
 
     /**
-     * @brief Gets a text-based representation of this level
+     * @brief Returns a copy of the level's current state.
      *
-     * The format of the returned string is the exact same as the input string used in the constructor.
-     *
-     * @return a text-based representation of this level
+     * @return the game map
      */
-    std::string getState() const;
+    std::multimap<Position, GameObject> getState() const;
 
     /**
      * @brief Getter for isWon_
