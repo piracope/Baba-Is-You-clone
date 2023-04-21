@@ -116,6 +116,10 @@ se retrouveraient cachés. On pourrait coder en dur une priorité dans la vue...
 ou s'assurer que la vue graphique ait des sprites transparents, ce qui réglerait
 le problème.
 
+* L'affichage se fait depuis une représentation textuelle du modèle de même format que celle
+des fichiers entrants. Cela veut dire que non seulement cette vue est construite dans le
+modèle, mais aussi que la vue doit parser une string, ce qui allourdit le code.
+
 ## Auteurs
 
 * Ayoub Moufidi (58089)
