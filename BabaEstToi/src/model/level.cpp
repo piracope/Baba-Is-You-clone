@@ -301,37 +301,42 @@ void Level::applyRules()
         if(!rules_.contains(obj.second.getType())) continue;
         // FIXME : is continue/break alright with the teacher ?
 
-        const auto asp {rules_.at(obj.second.getType())};
-        if(asp == ObjectType::SINK)
+        const auto rules {rules_.equal_range(obj.second.getType())}; // we get the rules aplied to this type
+        for (auto rule {rules.first}; rule != rules.second; ++rule) // for each of them
         {
-            // We need to loop through all elements just to make sure we aren't deleting a non-ELEM
+            auto asp {rule->second};
 
-            const auto its {gamemap_.equal_range(obj.first)};
-            auto it {its.first};
-            unsigned nb {0};
-            bool shouldErase {true};
-            while(it != its.second) {
-                if (it->second.getCategorie() != Category::ELEM) shouldErase = false; // DON'T make the tile disappear if there's an !ELEM
-                // !ELEM cannot disappear!!
-                nb++;
-                it++;
-            }
-
-            if(shouldErase && nb > 1) { // add to the death row only if the conditions are met
-                toRemove.insert(toRemove.end(), its.first, its.second);
-            }
-        }
-        else { // except SINK, we need to find if a pleyr is on it
-            for(const auto& playerObj : playerobjects)
+            if(asp == ObjectType::SINK)
             {
-                if(playerObj.first == obj.first)
+                // We need to loop through all elements just to make sure we aren't deleting a non-ELEM
+
+                const auto its {gamemap_.equal_range(obj.first)};
+                auto it {its.first};
+                unsigned nb {0};
+                bool shouldErase {true};
+                while(it != its.second) {
+                    if (it->second.getCategorie() != Category::ELEM) shouldErase = false; // DON'T make the tile disappear if there's an !ELEM
+                    // !ELEM cannot disappear!!
+                    nb++;
+                    it++;
+                }
+
+                if(shouldErase && nb > 1) { // add to the death row only if the conditions are met
+                    toRemove.insert(toRemove.end(), its.first, its.second);
+                }
+            }
+            else { // except SINK, we need to find if a pleyr is on it
+                for(const auto& playerObj : playerobjects)
                 {
-                    if(asp == ObjectType::WIN) // player-controllable on WIN
+                    if(playerObj.first == obj.first)
                     {
-                        isWon_ = true;
-                        return;
+                        if(asp == ObjectType::WIN) // player-controllable on WIN
+                        {
+                            isWon_ = true;
+                            return;
+                        }
+                        else if (asp == ObjectType::KILL) toRemove.push_back(playerObj); // player-controllable on KILL
                     }
-                    else if (asp == ObjectType::KILL) toRemove.push_back(playerObj); // player-controllable on KILL
                 }
             }
         }

@@ -39,13 +39,6 @@ multimap triée nécessite une fonction de comparaison, mais celle-ci
 est triviale à implémenter. Cela permet aussi de trier les éléments
 sur le plateau de façon à rendre l'affichage plus aisé.
 
-#### Représentation des règles
-
-Nous passons d'une unordered_multimap à une unorderd_map. Les trois
-aspects que nous implémentons sont SINK, KILL et WIN qui sont
-mutuellement exclusifs. Il est donc inutile de garder en mémoire
-plusieurs éventuels règles pour un même objet.
-
 #### Position
 
 Afin de représenter plus généralement un vecteur, un couple (x, y),
@@ -91,11 +84,8 @@ Une surcharge d'opérateur ont été ajoutés pour comparer un GameObject
 
 ## Améliorations possibles
 
-* Lors de la construction des règles, pour un même type d'objets, c'est
-le dernier aspect de règle qui prime. Pourtant, la règle réellement
-appliquée dépend d'un sens de priorité. WIN l'emporte sur KILL, qui
-l'emporte sur SINK. Il serait donc intéressant d'implémenter une version plus
-déterministe de la construction des règles.
+* L'application des règles dépend de l'ordre interne à la map les contenant,
+ordre qui n'est pas garanti. Ce serait mieux de le rendre plus déterministe.
 
 * L'utilisation d'une multimap étant beaucoup plus obscure que prévu,
 il serait intéressant d'envisager de refactoriser le code pour utiliser

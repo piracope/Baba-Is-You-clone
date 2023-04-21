@@ -3,7 +3,6 @@
 
 #include <map>
 #include <vector>
-#include <unordered_map>
 
 #include "gameobject.h"
 
@@ -89,11 +88,8 @@ class Level
      * A rule is represented by a couple (TEXT, ASPECT) which form the rule TEXT IS ASPECT.
      * While TEXT IS TEXT rules do exist, they can be applied immediately and as such do not require to be
      * stored in memory.
-     *
-     * While multiple rules can be formed for a single TEXT, only one is applied, and as such there's no need for
-     * a multimap.
      */
-    std::unordered_map<ObjectType, ObjectType> rules_;
+    std::multimap<ObjectType, ObjectType> rules_;
 
     /// The horizontal size of the level
     int width_ {0};
