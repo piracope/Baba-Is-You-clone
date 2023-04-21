@@ -111,7 +111,6 @@ std::string to_string(Category cat);
  */
 std::string to_string(ObjectType type);
 
-// FIXME : documenting those << operators ??
 std::ostream & operator<<(std::ostream& out, Category cat);
 std::ostream & operator<<(std::ostream& out, ObjectType type);
 std::ostream & operator<<(std::ostream& out, Direction dir);

@@ -22,8 +22,9 @@ void Baba::createLevel(unsigned nb)
 
 void Baba::restart() { createLevel(lvlNumber_); }
 
-std::string Baba::buildLevelFromMap(const std::multimap<Position, GameObject> &gamemap) const
+std::string Baba::buildLevelFromMap() const
 {
+    const auto gamemap {lvl_.getState()};
     std::ostringstream ret {};
     const auto dim {getDimensions()};
     ret << dim.x << ' ' << dim.y << std::endl; // first line - dimensions
@@ -40,7 +41,7 @@ std::string Baba::buildLevelFromMap(const std::multimap<Position, GameObject> &g
 void Baba::save() const
 {
     std::stringstream savefile;
-    savefile << lvlNumber_ << "\n" << buildLevelFromMap(lvl_.getState());
+    savefile << lvlNumber_ << "\n" << buildLevelFromMap();
     FileManager::writeFile(START_OF_PATH + "S.txt", savefile.str());
 }
 

@@ -20,8 +20,8 @@ add_executable(BabaEstToi
     observer/subject.cpp
     view/view.h
     view/view.cpp
-    controller/controller.h
-    controller/controller.cpp
+    controller/consolecontroller.h
+    controller/consolecontroller.cpp
 )
 
 add_custom_target(copy_levels_src
