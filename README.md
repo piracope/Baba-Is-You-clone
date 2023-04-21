@@ -107,12 +107,12 @@ config.properties comme vu en ATLG4.
 * Le code pourrait être factorisé un peu plus.
 
 * L'affichage de plusieurs éléments sur une même position est non déterministe.
-L'état du jeu que reçoit la vue est construit en itérant dans la map contenant
-les éléments du jeu. Rien ne garantit l'ordre dans lequel se trouveront les éléments
-au sein d'une position. Ainsi, des objets ayant moins d'importance pour le joueur
-se retrouveraient cachés. On pourrait coder en dur une priorité dans la vue...
-ou s'assurer que la vue graphique ait des sprites transparents, ce qui réglerait
-le problème.
+Nous affichons à une certaine position le dernier élément apparaissant à celle-ci,
+mais rien ne garantit que l'ordre dans lequel se trouveront les éléments
+au sein d'une position est le même que leur ordre d'apparition. Ainsi, des objets 
+ayant moins d'importance pour le joueur pourraient se retrouver cachés.
+On pourrait coder en dur une priorité dans la vue... ou s'assurer que la vue
+graphique ait des sprites transparents, ce qui réglerait le problème.
 
 ## Auteurs
 

@@ -60,6 +60,10 @@ void Controller::play()
         {
             this->baba.restart();
         }
+        else if(line == "help")
+        {
+            view.printHelp();
+        }
         line = view.askLine();
     }
 }

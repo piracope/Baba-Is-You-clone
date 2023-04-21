@@ -39,6 +39,11 @@ public:
      * @param e the error to print
      */
     void printError(const std::string&);
+
+    /**
+     * @brief prints a help message
+     */
+    void printHelp();
 };
 }
 #endif // VIEW_H

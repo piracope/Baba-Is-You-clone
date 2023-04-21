@@ -36,6 +36,11 @@ void ViewConsole::printError(const std::string& e)
     std::cerr << e << std::endl;
 }
 
+void ViewConsole::printHelp()
+{
+    std::cout << "movement : zqsd, restart : r, load, save, exit" << std::endl;
+}
+
 /**
  * @brief convert a type to the right string to display
  * @param type to convert

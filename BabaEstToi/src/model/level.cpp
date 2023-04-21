@@ -206,7 +206,7 @@ void Level::processRule(const ObjectType& lhs, const ObjectType& rhs)
 
     if(rhs >= ObjectType::KILL) // NOTE : KILL is the first ASPECT
     {
-        // FIXME : implement priority -> only inserting KILL if it isn't WIN
+
         rules_.insert({refType, rhs}); // if right part of the rule is an ASPECT, add to the rules
     }
     else if(rhs > ObjectType::IS) // ensures != ELEM
@@ -272,6 +272,8 @@ void Level::buildRules()
                 }
                 // FIXME : DRY. but idk how to change this
             }
+
+            // TODO : implement priority -> only inserting KILL if it isn't WIN
 
             if(rhs != ObjectType::IS) //if the rule was built
             {
