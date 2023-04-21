@@ -114,7 +114,7 @@ class Level
      * @param type the type to look for in the level
      * @return all GameObjects which ObjectType is type
      */
-    std::vector<std::pair<Position, GameObject>> getAllOfType(ObjectType type) const;
+    std::vector<std::pair<Position, GameObject>> getAllOfType(const ObjectType& type) const;
 
     /**
      * @brief Removes a GameObject at a given Position

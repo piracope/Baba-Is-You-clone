@@ -180,7 +180,7 @@ std::vector<std::pair<Position, GameObject>> Level::getPlayerObjects() const
     return playerobjects;
 }
 
-std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type) const
+std::vector<std::pair<Position, GameObject>> Level::getAllOfType(const ObjectType& type) const
 {
     std::vector<std::pair<Position, GameObject>> ret {};
     for (const auto &p : gamemap_)

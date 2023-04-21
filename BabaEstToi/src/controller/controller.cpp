@@ -49,12 +49,10 @@ void Controller::play()
             }
             catch(const std::ios_base::failure&)
             {
-                // TODO : print error --> couldn't find save
                 view.printError("couldn't find save");
             }
             catch (...)
             {
-                // TODO: print error --> couldn't process save file
                 view.printError("couldn't process save file");
             }
         }

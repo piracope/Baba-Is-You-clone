@@ -30,7 +30,7 @@ public:
      * @param type the GameObject's ObjectType
      * @param dir the direction towards which the GameObject will face
      */
-    GameObject(ObjectType type, Direction dir = Direction::RIGHT);
+    GameObject(const ObjectType& type, const Direction& dir = Direction::RIGHT);
 
     /**
      * @brief Getter for the Categorie
@@ -54,7 +54,7 @@ public:
      * @brief Setter for the Direction
      * @param the Direction towards which the GameObject will face
      */
-    void setDirection(Direction dir);
+    void setDirection(const Direction& dir);
 
     /**
      * @brief Compares this GameObject to another
@@ -64,7 +64,7 @@ public:
      * @param another GameObject
      * @return true if both GameObjects are equivalent
      */
-    bool operator==(GameObject other);
+    bool operator==(const GameObject& other);
 
 };
 

@@ -8,10 +8,7 @@
 namespace view
 {
 
-/**
- * @brief Make the view console
- * @param baba the model
- */
+
 ViewConsole::ViewConsole(model::Baba * baba) :
     baba_ {baba} //changer ça doit être le controller
 {
@@ -19,18 +16,13 @@ ViewConsole::ViewConsole(model::Baba * baba) :
     ViewConsole::update(baba);
 }
 
-/**
- * @brief Destructor of the view makes the model forget
- */
+
 ViewConsole::~ViewConsole()
 {
     baba_->unregisterObserver(this);
 }
 
-/**
- * @brief take the input of the player
- * @return the input of the player
- */
+
 std::string ViewConsole::askLine()
 {
     std::string line;
@@ -38,13 +30,10 @@ std::string ViewConsole::askLine()
     return line;
 }
 
-/**
- * @brief print an error
- * @param e the error to print
- */
-void ViewConsole::printError(const std::string e)
+
+void ViewConsole::printError(const std::string& e)
 {
-    std::cout << e << std::endl;
+    std::cerr << e << std::endl;
 }
 
 /**
@@ -74,10 +63,6 @@ void typeToCout(const std::string& type){
     }
 }
 
-/**
- * @brief update the view of the game by reading the state of the game
- * @param subject the model
- */
 void ViewConsole::update(const Subject * subject)
 {
     model::Position dim {baba_->getDimensions()};

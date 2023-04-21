@@ -5,7 +5,7 @@ namespace model
 
 // CONSTRUCTORS
 
-GameObject::GameObject(ObjectType type, Direction dir)
+GameObject::GameObject(const ObjectType& type, const Direction& dir)
     : type_ {type}, dir_ {dir}
 {
     if(type < ObjectType::IS) cat_ = Category::ELEM;
@@ -19,9 +19,9 @@ Category GameObject::getCategorie() const { return cat_; }
 ObjectType GameObject::getType() const { return type_; }
 Direction GameObject::getDirection() const { return dir_; }
 
-void GameObject::setDirection(Direction dir){ dir_ = dir; }
+void GameObject::setDirection(const Direction& dir){ dir_ = dir; }
 
-bool GameObject::operator==(GameObject other)
+bool GameObject::operator==(const GameObject& other)
 {
     return type_ == other.type_;
 }
