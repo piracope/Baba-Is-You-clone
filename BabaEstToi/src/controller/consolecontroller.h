@@ -3,13 +3,13 @@
 
 #include "../model/baba.h"
 #include "../view/view.h"
-// TODO : document controller
+
 namespace controller
 {
 /**
  * @brief The Controller that links the console View to the model
  */
-class Controller // FIXME : call it ConsoleController or something
+class ConsoleController
 {
     /**
      * @brief the model
@@ -25,7 +25,7 @@ public:
     /**
      * @brief Creates and starts a new game.
      */
-    Controller();
+    ConsoleController();
 
     /**
      * @brief Main gameplay loop.

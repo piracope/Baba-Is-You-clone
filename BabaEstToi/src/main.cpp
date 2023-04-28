@@ -1,8 +1,8 @@
-#include "controller/controller.h"
+#include "controller/consolecontroller.h"
 
 int main()
 {
-    controller::Controller c {};
+    controller::ConsoleController c {};
     c.play();
     return 0;
 }

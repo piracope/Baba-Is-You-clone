@@ -146,7 +146,7 @@ class Level
      *
      * @param pos the starting position
      * @param dir the direction towards which the movement is done
-     * @param updateRules a marker set to true if rules need to be update after this move
+     * @param updateRules a marker set to true if rules need to be updated after this move
      * @return true if the movement is valid
      */
     bool canMove(const Position& pos, const Direction& dir, bool& updateRules);

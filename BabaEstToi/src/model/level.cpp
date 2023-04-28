@@ -207,12 +207,22 @@ void Level::processRule(const ObjectType& lhs, const ObjectType& rhs)
     if(rhs >= ObjectType::KILL) // NOTE : KILL is the first ASPECT
     {
 
+        // TODO : implement priority -> only inserting KILL if it isn't WIN
+
+        /*
+         * YOU can exist in coexistence with anything
+         * WIN is stronger than SINK, which is stronger than KILL
+         *
+         * PUSH is stronger than STOP
+         */
+
         rules_.insert({refType, rhs}); // if right part of the rule is an ASPECT, add to the rules
     }
     else if(rhs > ObjectType::IS) // ensures != ELEM
     {
         // if not, mutate all tiles from left to right
         // BABA IS WALL => BABA becomes WALL
+
         const auto refTypeRight {getRefType(rhs)};
         if(refTypeRight != ObjectType::IS) mutateAll(refType, refTypeRight);
     }
@@ -273,8 +283,6 @@ void Level::buildRules()
                 // FIXME : DRY. but idk how to change this
             }
 
-            // TODO : implement priority -> only inserting KILL if it isn't WIN
-
             if(rhs != ObjectType::IS) //if the rule was built
             {
                 processRule(lhs, rhs); // process it
@@ -301,7 +309,6 @@ void Level::applyRules()
     {
         // if there are no rules, no point going further
         if(!rules_.contains(obj.second.getType())) continue;
-        // FIXME : is continue/break alright with the teacher ?
 
         const auto rules {rules_.equal_range(obj.second.getType())}; // we get the rules aplied to this type
         for (auto rule {rules.first}; rule != rules.second; ++rule) // for each of them
@@ -429,7 +436,7 @@ void Level::movePlayer(const Direction& dir)
 {
     if(isWon_) throw std::logic_error {"Cannot move when game is won."};
 
-    // 1. get player controlled types (X IS MOVE)
+    // 1. get player controlled types (X IS YOU)
     // 2. for each of those types, get all GameObjects of that type
     std::vector<std::pair<Position, GameObject>> playerobjects {getPlayerObjects()};
 

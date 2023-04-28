@@ -1,14 +1,14 @@
-#include "controller.h"
+#include "consolecontroller.h"
 
 namespace controller
 {
-Controller::Controller():
+ConsoleController::ConsoleController():
     baba {model::Baba{}}, view {view::ViewConsole(&baba)}
 {
 }
 
 
-void Controller::play()
+void ConsoleController::play()
 {
     std::string line = view.askLine();
     while (line != "exit")

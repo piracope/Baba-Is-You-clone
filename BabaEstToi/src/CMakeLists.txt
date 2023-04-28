@@ -23,10 +23,8 @@ add_executable(BabaEstToi
     observer/subject.cpp
     view/view.h
     view/view.cpp
-    controller/controller.h
-    controller/controller.cpp
-
-    mainwindow.ui
+    controller/consolecontroller.h
+    controller/consolecontroller.cpp
 )
 
 target_link_libraries(BabaEstToi PRIVATE Qt6::Widgets)
