@@ -3,7 +3,6 @@
 
 #include <map>
 #include <vector>
-#include <unordered_map>
 
 #include "gameobject.h"
 
@@ -89,11 +88,8 @@ class Level
      * A rule is represented by a couple (TEXT, ASPECT) which form the rule TEXT IS ASPECT.
      * While TEXT IS TEXT rules do exist, they can be applied immediately and as such do not require to be
      * stored in memory.
-     *
-     * While multiple rules can be formed for a single TEXT, only one is applied, and as such there's no need for
-     * a multimap.
      */
-    std::unordered_map<ObjectType, ObjectType> rules_;
+    std::multimap<ObjectType, ObjectType> rules_;
 
     /// The horizontal size of the level
     int width_ {0};
@@ -118,7 +114,7 @@ class Level
      * @param type the type to look for in the level
      * @return all GameObjects which ObjectType is type
      */
-    std::vector<std::pair<Position, GameObject>> getAllOfType(ObjectType type) const;
+    std::vector<std::pair<Position, GameObject>> getAllOfType(const ObjectType& type) const;
 
     /**
      * @brief Removes a GameObject at a given Position
@@ -150,7 +146,7 @@ class Level
      *
      * @param pos the starting position
      * @param dir the direction towards which the movement is done
-     * @param updateRules a marker set to true if rules need to be update after this move
+     * @param updateRules a marker set to true if rules need to be updated after this move
      * @return true if the movement is valid
      */
     bool canMove(const Position& pos, const Direction& dir, bool& updateRules);
@@ -226,13 +222,11 @@ public:
     void movePlayer(const Direction& dir);
 
     /**
-     * @brief Gets a text-based representation of this level
+     * @brief Returns a copy of the level's current state.
      *
-     * The format of the returned string is the exact same as the input string used in the constructor.
-     *
-     * @return a text-based representation of this level
+     * @return the game map
      */
-    std::string getState() const;
+    std::multimap<Position, GameObject> getState() const;
 
     /**
      * @brief Getter for isWon_

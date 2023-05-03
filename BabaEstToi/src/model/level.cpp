@@ -180,7 +180,7 @@ std::vector<std::pair<Position, GameObject>> Level::getPlayerObjects() const
     return playerobjects;
 }
 
-std::vector<std::pair<Position, GameObject>> Level::getAllOfType(ObjectType type) const
+std::vector<std::pair<Position, GameObject>> Level::getAllOfType(const ObjectType& type) const
 {
     std::vector<std::pair<Position, GameObject>> ret {};
     for (const auto &p : gamemap_)
@@ -206,13 +206,23 @@ void Level::processRule(const ObjectType& lhs, const ObjectType& rhs)
 
     if(rhs >= ObjectType::KILL) // NOTE : KILL is the first ASPECT
     {
-        // FIXME : implement priority -> only inserting KILL if it isn't WIN
+
+        // TODO : implement priority -> only inserting KILL if it isn't WIN
+
+        /*
+         * YOU can exist in coexistence with anything
+         * WIN is stronger than SINK, which is stronger than KILL
+         *
+         * PUSH is stronger than STOP
+         */
+
         rules_.insert({refType, rhs}); // if right part of the rule is an ASPECT, add to the rules
     }
     else if(rhs > ObjectType::IS) // ensures != ELEM
     {
         // if not, mutate all tiles from left to right
         // BABA IS WALL => BABA becomes WALL
+
         const auto refTypeRight {getRefType(rhs)};
         if(refTypeRight != ObjectType::IS) mutateAll(refType, refTypeRight);
     }
@@ -299,39 +309,43 @@ void Level::applyRules()
     {
         // if there are no rules, no point going further
         if(!rules_.contains(obj.second.getType())) continue;
-        // FIXME : is continue/break alright with the teacher ?
 
-        const auto asp {rules_.at(obj.second.getType())};
-        if(asp == ObjectType::SINK)
+        const auto rules {rules_.equal_range(obj.second.getType())}; // we get the rules aplied to this type
+        for (auto rule {rules.first}; rule != rules.second; ++rule) // for each of them
         {
-            // We need to loop through all elements just to make sure we aren't deleting a non-ELEM
+            auto asp {rule->second};
 
-            const auto its {gamemap_.equal_range(obj.first)};
-            auto it {its.first};
-            unsigned nb {0};
-            bool shouldErase {true};
-            while(it != its.second) {
-                if (it->second.getCategorie() != Category::ELEM) shouldErase = false; // DON'T make the tile disappear if there's an !ELEM
-                // !ELEM cannot disappear!!
-                nb++;
-                it++;
-            }
-
-            if(shouldErase && nb > 1) { // add to the death row only if the conditions are met
-                toRemove.insert(toRemove.end(), its.first, its.second);
-            }
-        }
-        else { // except SINK, we need to find if a pleyr is on it
-            for(const auto& playerObj : playerobjects)
+            if(asp == ObjectType::SINK)
             {
-                if(playerObj.first == obj.first)
+                // We need to loop through all elements just to make sure we aren't deleting a non-ELEM
+
+                const auto its {gamemap_.equal_range(obj.first)};
+                auto it {its.first};
+                unsigned nb {0};
+                bool shouldErase {true};
+                while(it != its.second) {
+                    if (it->second.getCategorie() != Category::ELEM) shouldErase = false; // DON'T make the tile disappear if there's an !ELEM
+                    // !ELEM cannot disappear!!
+                    nb++;
+                    it++;
+                }
+
+                if(shouldErase && nb > 1) { // add to the death row only if the conditions are met
+                    toRemove.insert(toRemove.end(), its.first, its.second);
+                }
+            }
+            else { // except SINK, we need to find if a pleyr is on it
+                for(const auto& playerObj : playerobjects)
                 {
-                    if(asp == ObjectType::WIN) // player-controllable on WIN
+                    if(playerObj.first == obj.first)
                     {
-                        isWon_ = true;
-                        return;
+                        if(asp == ObjectType::WIN) // player-controllable on WIN
+                        {
+                            isWon_ = true;
+                            return;
+                        }
+                        else if (asp == ObjectType::KILL) toRemove.push_back(playerObj); // player-controllable on KILL
                     }
-                    else if (asp == ObjectType::KILL) toRemove.push_back(playerObj); // player-controllable on KILL
                 }
             }
         }
@@ -422,7 +436,7 @@ void Level::movePlayer(const Direction& dir)
 {
     if(isWon_) throw std::logic_error {"Cannot move when game is won."};
 
-    // 1. get player controlled types (X IS MOVE)
+    // 1. get player controlled types (X IS YOU)
     // 2. for each of those types, get all GameObjects of that type
     std::vector<std::pair<Position, GameObject>> playerobjects {getPlayerObjects()};
 
@@ -444,18 +458,9 @@ void Level::movePlayer(const Direction& dir)
 
 // GETTERS
 
-std::string Level::getState() const
+std::multimap<Position, GameObject> Level::getState() const
 {
-    std::ostringstream ret {};
-    ret << width_ << ' ' << height_ << std::endl; // first line - dimensions
-    for (const auto& [pos, obj] : gamemap_)
-    {
-        ret << obj << ' ' << pos.x << ' ' << pos.y;
-        if (obj.getDirection() != Direction::RIGHT) ret << ' ' << obj.getDirection();
-        ret << std::endl;
-    }
-
-    return ret.str();
+    return gamemap_;
 }
 
 bool Level::isWon() const { return isWon_; }

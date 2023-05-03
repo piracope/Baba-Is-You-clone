@@ -1,14 +1,14 @@
-#include "controller.h"
+#include "consolecontroller.h"
 
 namespace controller
 {
-Controller::Controller():
+ConsoleController::ConsoleController():
     baba {model::Baba{}}, view {view::ViewConsole(&baba)}
 {
 }
 
 
-void Controller::play()
+void ConsoleController::play()
 {
     std::string line = view.askLine();
     while (line != "exit")
@@ -49,18 +49,20 @@ void Controller::play()
             }
             catch(const std::ios_base::failure&)
             {
-                // TODO : print error --> couldn't find save
                 view.printError("couldn't find save");
             }
             catch (...)
             {
-                // TODO: print error --> couldn't process save file
                 view.printError("couldn't process save file");
             }
         }
         else if(line == "r")
         {
             this->baba.restart();
+        }
+        else if(line == "help")
+        {
+            view.printHelp();
         }
         line = view.askLine();
     }

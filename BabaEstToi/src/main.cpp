@@ -1,8 +1,12 @@
-#include "controller/controller.h"
+#include "controller/consolecontroller.h"
+#include <QApplication>
+#include "view/mainwindow.h"
 
-int main()
+
+int main(int argc, char* argv[])
 {
-    controller::Controller c {};
-    c.play();
-    return 0;
+    QApplication app(argc, argv);
+    MainWindow window;
+    window.show();
+    return app.exec();
 }
