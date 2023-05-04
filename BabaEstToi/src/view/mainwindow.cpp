@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
- #include <iostream>
+#include <iostream>
+#include <QPixmap>
+#include <QMovie>
+#include "babahChar.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent),
@@ -12,7 +15,14 @@ MainWindow::MainWindow(QWidget *parent) :
 
     QRect viewContentsRect = ui->myGraphicsView->contentsRect();
     _scene.setSceneRect(viewContentsRect);
-     ui->myGraphicsView->setScene(&_scene);
+    ui->myGraphicsView->setScene(&_scene);
+    this->update();
+    //    QPixmap pix("C:/Users/ZEKI_/Downloads/Neco_Taunt_truc");
+    //QMovie *movie = new QMovie("C:/Users/ZEKI_/Downloads/neco_taunt.gif");
+    //ui->neco->setMovie(movie);
+    //movie->start();
+    //    ui->neco->setPixmap(pix.scaled(100,100,Qt::KeepAspectRatio));
+
 
 }
 
@@ -21,10 +31,29 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_addRect_clicked()
+void MainWindow::update()
 {
-    _scene.addRect(50,50,50,50);
-    std::cout << "Succes" << std::endl;
+    _scene.clear();
+    auto gamemap = baba_.getState();
+    _scene.clear();
+    for (int x = 0; x< 18; ++x) {
+        for (int y = 0; y < 18; ++y) {
+            auto range {gamemap.equal_range({x, y})};
+            if(range.first != range.second)
+            {
+                auto tmp = range.first;
+                decltype(tmp) toShow;
+                while(tmp!=range.second){
+                    if(tmp->second.getType() == model::ObjectType::BABA){
+                        std::cout<<"joueur à la pos : " << tmp->first.x << ", " << tmp->first.y << std::endl;
+                    }
+                    _scene.addRect(26*x,26*y,26,26);
+                    ++tmp;
+                }
+            }
+        }
+    }
+    //_scene.addText("j'aime c++(c'est faux)");
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
@@ -32,14 +61,23 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
     std::cout <<(char) event->key() << std::endl;
     if((char)event->key() == 'Z'){//doit être en uppercase
         baba_.move(model::Direction::UP);
+        this->update();
     }
     if((char)event->key() == 'Q'){
         baba_.move(model::Direction::LEFT);
+        this->update();
     }
     if((char)event->key() == 'S'){
         baba_.move(model::Direction::DOWN);
+        this->update();
     }
     if((char)event->key() == 'D'){
         baba_.move(model::Direction::RIGHT);
+        this->update();
+    }
+    if((char)event->key() == 'R'){
+        baba_.restart();
+        this->update();
     }
 }
+

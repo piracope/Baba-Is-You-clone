@@ -19,8 +19,6 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-private slots:
-    void on_addRect_clicked();
 private:
     Ui::MainWindow *ui;
 
@@ -29,6 +27,8 @@ private:
     model::Baba baba_;
 
     void keyPressEvent(QKeyEvent *event) override;
+
+    void update();
 };
 
 #endif // MAINWINDOW_H

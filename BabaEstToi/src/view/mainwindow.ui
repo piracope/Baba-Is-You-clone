@@ -29,17 +29,17 @@
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="addRect">
+  <widget class="QLabel" name="neco">
    <property name="geometry">
     <rect>
-     <x>200</x>
-     <y>130</y>
-     <width>80</width>
-     <height>24</height>
+     <x>0</x>
+     <y>390</y>
+     <width>151</width>
+     <height>151</height>
     </rect>
    </property>
    <property name="text">
-    <string>add rectangle</string>
+    <string/>
    </property>
   </widget>
  </widget>

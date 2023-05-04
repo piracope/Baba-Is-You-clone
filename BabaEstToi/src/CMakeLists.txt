@@ -29,6 +29,8 @@ add_executable(BabaEstToi
     view/mainwindow.cpp
     view/mainwindow.h
     view/mainwindow.ui
+    view/babaChar.cpp
+    view/babahChar.h
 )
 
 target_link_libraries(BabaEstToi PRIVATE Qt6::Widgets)
