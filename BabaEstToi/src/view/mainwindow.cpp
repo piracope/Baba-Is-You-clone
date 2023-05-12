@@ -17,13 +17,6 @@ MainWindow::MainWindow(QWidget *parent) :
     _scene.setSceneRect(viewContentsRect);
     ui->myGraphicsView->setScene(&_scene);
     this->update();
-    //    QPixmap pix("C:/Users/ZEKI_/Downloads/Neco_Taunt_truc");
-    //QMovie *movie = new QMovie("C:/Users/ZEKI_/Downloads/neco_taunt.gif");
-    //ui->neco->setMovie(movie);
-    //movie->start();
-    //    ui->neco->setPixmap(pix.scaled(100,100,Qt::KeepAspectRatio));
-
-
 }
 
 MainWindow::~MainWindow()
@@ -53,7 +46,6 @@ void MainWindow::update()
             }
         }
     }
-    //_scene.addText("j'aime c++(c'est faux)");
 }
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
