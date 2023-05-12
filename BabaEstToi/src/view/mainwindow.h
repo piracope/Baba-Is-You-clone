@@ -3,15 +3,16 @@
 
 #include <QMainWindow>
 #include <QtWidgets/qgraphicsscene.h>
-#include <Qevent>
+#include <QEvent>
 #include <QKeyEvent>
 #include "../model/baba.h"
+#include "../observer/observer.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QWidget
+class MainWindow : public QWidget, public Observer
 {
     Q_OBJECT
 
@@ -28,7 +29,11 @@ private:
 
     void keyPressEvent(QKeyEvent *event) override;
 
-    void update();
+    /**
+     * @brief update the view of the game by reading the state of the game
+     * @param subject the model
+     */
+    void update(const Subject * subject) override;
 };
 
 #endif // MAINWINDOW_H
