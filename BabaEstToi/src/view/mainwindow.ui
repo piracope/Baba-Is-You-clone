@@ -28,18 +28,8 @@
      <height>540</height>
     </rect>
    </property>
-  </widget>
-  <widget class="QLabel" name="neco">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>390</y>
-     <width>151</width>
-     <height>151</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string/>
+   <property name="focusPolicy">
+    <enum>Qt::NoFocus</enum>
    </property>
   </widget>
  </widget>

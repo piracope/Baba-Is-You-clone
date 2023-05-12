@@ -2,11 +2,10 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QtWidgets/qgraphicsscene.h>
-#include <QEvent>
-#include <QKeyEvent>
-#include "../model/baba.h"
+#include <QGraphicsScene>
+
 #include "../observer/observer.h"
+#include "../model/baba.h"
 
 namespace Ui {
 class MainWindow;
@@ -21,11 +20,15 @@ public:
     ~MainWindow();
 
 private:
+    static int TILE_SIZE;
+
     Ui::MainWindow *ui;
 
     QGraphicsScene _scene;
 
     model::Baba baba_;
+
+    const QPixmap& getSprite(const model::ObjectType);
 
     void keyPressEvent(QKeyEvent *event) override;
 
