@@ -26,10 +26,10 @@ MainWindow::~MainWindow()
 
 void MainWindow::update()
 {
+    QPixmap mc("C:/Users/g58143/Downloads/babaMc.jpg");//création des qpixmap dans le contructeur
+    auto gamemap = baba_.getState();//METTRE A 24
     _scene.clear();
-    auto gamemap = baba_.getState();
-    _scene.clear();
-    for (int x = 0; x< 18; ++x) {
+    for (int x = 0; x < 18; ++x) {
         for (int y = 0; y < 18; ++y) {
             auto range {gamemap.equal_range({x, y})};
             if(range.first != range.second)
@@ -37,10 +37,19 @@ void MainWindow::update()
                 auto tmp = range.first;
                 decltype(tmp) toShow;
                 while(tmp!=range.second){
-                    if(tmp->second.getType() == model::ObjectType::BABA){
+                    if(tmp->second.getType() == model::ObjectType::BABA) {
+                        QGraphicsPixmapItem* p = new QGraphicsPixmapItem(mc);
+                        p->setPos(26*x,26*y);
+                        _scene.addItem(p);
                         std::cout<<"joueur à la pos : " << tmp->first.x << ", " << tmp->first.y << std::endl;
+                    } else if (tmp->second.getType() == model::ObjectType::BABA) {
+                        QGraphicsPixmapItem* p = new QGraphicsPixmapItem(mc);
+                        p->setPos(26*x,26*y);
+                        _scene.addItem(p);
                     }
-                    _scene.addRect(26*x,26*y,26,26);
+                    else {
+                        _scene.addRect(26*x,26*y,26,26);
+                    }
                     ++tmp;
                 }
             }
