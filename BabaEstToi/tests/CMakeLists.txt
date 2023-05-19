@@ -27,11 +27,5 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(Catch2)
 #list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 
-add_custom_target(copy_levels_test
-    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/levels ${CMAKE_CURRENT_BINARY_DIR}/levels
-)
-
-add_dependencies(BabaEstToi copy_levels_test)
-
 
 target_link_libraries(BabaEstToiTests PRIVATE Catch2::Catch2WithMain)

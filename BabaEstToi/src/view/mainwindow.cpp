@@ -30,7 +30,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 const QPixmap& MainWindow::getSprite(const model::ObjectType type)
 {
-    const static QPixmap spritesheet {"sprites/spritesheet.png"};
+    const static QPixmap spritesheet {":/resource/sprites/spritesheet.png"};
 
     using enum model::ObjectType;
 
