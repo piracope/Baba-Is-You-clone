@@ -11,13 +11,19 @@ namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QWidget, public Observer
+class MainWindow : public QMainWindow, public Observer
 {
     Q_OBJECT
 
 public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+
+private slots:
+    void save();
+    void load();
+    void about();
+    void help();
 
 private:
     static int TILE_SIZE;
@@ -29,7 +35,8 @@ private:
     model::Baba baba_;
 
     const QPixmap& getSprite(const model::ObjectType);
-
+    void setupMenus();
+    void setupWindow();
     void keyPressEvent(QKeyEvent *event) override;
 
     /**

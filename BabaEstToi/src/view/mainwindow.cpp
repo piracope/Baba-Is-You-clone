@@ -3,30 +3,85 @@
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
+#include <QMenuBar>
+#include <QMessageBox>
 
 int MainWindow::TILE_SIZE {24};
 
 MainWindow::MainWindow(QWidget *parent) :
-    QWidget {parent},
+    QMainWindow {parent},
     ui {new Ui::MainWindow},
     _scene {this},
     baba_{model::Baba{}}
+{
+    setupMenus();
+    setupWindow();
+
+    baba_.registerObserver(this);
+    MainWindow::update(&baba_);
+
+
+}
+
+void MainWindow::setupWindow()
 {
     ui->setupUi(this);
 
     const auto dimensions {baba_.getDimensions()};
 
-    QRect viewContentsRect = QRect {0, 0, dimensions.x * TILE_SIZE, dimensions.y * TILE_SIZE};
-    // FIXME : this assumes that all levels have the same size.
+    const QRect viewContentsRect = QRect {0, 0, dimensions.x * TILE_SIZE, dimensions.y * TILE_SIZE};
+    // NOTE : this assumes that all levels have the same size.
 
     _scene.setSceneRect(viewContentsRect); // set size of window
     ui->myGraphicsView->setBackgroundBrush(Qt::black); // auto fill background to black
     ui->myGraphicsView->setScene(&_scene);
 
-    baba_.registerObserver(this);
-    MainWindow::update(&baba_);
+    // fits the window to the content
+    ui->myGraphicsView->adjustSize();
+    this->setCentralWidget(ui->myGraphicsView);
+    this->adjustSize();
 }
 
+void MainWindow::setupMenus()
+{
+    QMenu* file {this->menuBar()->addMenu("&File")};
+    QAction* save {file->addAction("&Save")};
+    QAction* load {file->addAction("&Load")};
+
+
+    QMenu* help = this->menuBar()->addMenu("&Help");
+    QAction* commands {help->addAction("&Keyboard commands")};
+    QAction* about {help->addAction("&About")};
+    this->connect(about, &QAction::triggered, this, &MainWindow::about);
+    this->connect(commands, &QAction::triggered, this, &MainWindow::help);
+    this->connect(save, &QAction::triggered, this, &MainWindow::save);
+    this->connect(load, &QAction::triggered, this, &MainWindow::load);
+}
+
+void MainWindow::about()
+{
+    QMessageBox::about(this, tr("About Baba Est Toi"),
+                       tr("<b>Baba Est Toi</b> is a C++/Qt Widget port of Baba is You.<br>"
+                          "Authors of the port : Ayoub Moufidi (58089), Zeki Ozkara (58143)"));
+}
+
+void MainWindow::help()
+{
+    QMessageBox::information(this, tr("Keyboard commands"),
+                             tr("Move : arrow keys<br>"
+                                "Restart : R<br>"
+                                "Quit : Escape"));
+}
+
+void MainWindow::save()
+{
+    baba_.save();
+}
+
+void MainWindow::load()
+{
+    baba_.load();
+}
 
 const QPixmap& MainWindow::getSprite(const model::ObjectType type)
 {

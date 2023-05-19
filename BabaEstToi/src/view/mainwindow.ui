@@ -13,12 +13,6 @@
   <property name="windowTitle">
    <string>Baba Est Toi</string>
   </property>
-  <property name="windowOpacity">
-   <double>1.000000000000000</double>
-  </property>
-  <property name="autoFillBackground">
-   <bool>false</bool>
-  </property>
   <widget class="QGraphicsView" name="myGraphicsView">
    <property name="geometry">
     <rect>

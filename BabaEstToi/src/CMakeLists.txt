@@ -26,6 +26,8 @@ add_executable(BabaEstToi
     view/view.cpp
     controller/consolecontroller.h
     controller/consolecontroller.cpp
+    controller/guicontroller.h
+    controller/guicontroller.cpp
     view/mainwindow.cpp
     view/mainwindow.h
     view/mainwindow.ui
