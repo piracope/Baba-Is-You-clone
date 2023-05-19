@@ -29,8 +29,6 @@ add_executable(BabaEstToi
     view/mainwindow.cpp
     view/mainwindow.h
     view/mainwindow.ui
-    view/babaChar.cpp
-    view/babahChar.h
 )
 
 target_link_libraries(BabaEstToi PRIVATE Qt6::Widgets)
@@ -39,7 +37,11 @@ add_custom_target(copy_levels_src
     COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/levels ${CMAKE_CURRENT_BINARY_DIR}/levels
 )
 
-add_dependencies(BabaEstToi copy_levels_src)
+add_custom_target(copy_sprites_src
+    COMMAND ${CMAKE_COMMAND} -E copy_directory ${PROJECT_SOURCE_DIR}/sprites ${CMAKE_CURRENT_BINARY_DIR}/sprites
+)
+
+add_dependencies(BabaEstToi copy_levels_src copy_sprites_src)
 
 install(TARGETS BabaEstToi
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

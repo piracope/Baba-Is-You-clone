@@ -13,9 +13,17 @@ dossier `Modélisation/`, accompagné du schéma UML du projet.
 Des surcharges d'opérateurs ont été ajoutées pour faciliter
 l'affichage, ainsi que des méthodes to_string.
 
-### Game
+### Game/Baba
+#### Nom
 
-La classe Façade Game a été renommée en Baba... parce que.
+La classe Façade Game a été renommée en Baba. Il n'y a aucune vraie raison.
+
+#### Méthode `buildLevelFromMap`
+
+Cette méthode utilitaire a été ajoutée suite à la modification de `Level::getState()`.
+Étant donné que cette méthode ne retourne plus une string, il a fallu rajouter
+une méthode qui faisait cette conversion. Comme Baba était la seule classe devant
+effectuer ce traitement, c'est elle qui possède cette méthode.
 
 ### FileManager
 
@@ -33,18 +41,10 @@ s'agit plus que d'une classe utilitaire qui lit et écrit des fichiers.
 #### Représentation du plateau
 
 Nous passons d'une unordered_multimap à une multimap. Utiliser une
-unordere_mutimap aurait nécessité de créer une fonction de hachage pour
+unordered_mutimap aurait nécessité de créer une fonction de hachage pour
 la classe Position, et cela dépasse nos compétences. Passer à une
 multimap triée nécessite une fonction de comparaison, mais celle-ci
-est triviale à implémenter. Cela permet aussi de trier les éléments
-sur le plateau de façon à rendre l'affichage plus aisé.
-
-#### Représentation des règles
-
-Nous passons d'une unordered_multimap à une unorderd_map. Les trois
-aspects que nous implémentons sont SINK, KILL et WIN qui sont
-mutuellement exclusifs. Il est donc inutile de garder en mémoire
-plusieurs éventuels règles pour un même objet.
+est triviale à implémenter.
 
 #### Position
 
@@ -58,6 +58,15 @@ Cette méthode étant originellement tout le temps utilisée avec
 `getAllOfType`, `getPlayerObjects` retourne à présent tous les
 `GameObjects` contrôlables par le joueur, et non seulement les
 types.
+
+#### `getState`
+
+Cette méthode retournait à l'origine une version textuelle de l'état
+du niveau pour but d'être utilisée tant dans la sauvegarde que
+dans l'affichage. Cela violait la séparation des compétences puisque
+le modèle participait à la construction de la vue, et rendait cette
+vue plus compliquée puisqu'elle devait parser une string. Elle renvoie
+à présent une copie du plateau de jeu du niveau.
 
 #### Ajout de méthodes privées utilitaires
 
@@ -89,13 +98,12 @@ Une surcharge d'opérateur ont été ajoutés pour comparer un GameObject
 
 * L'aspect BEST est défini mais n'est pas implémenté.
 
+* La priorité de l'affichage et des règles n'est pas défini.
+
 ## Améliorations possibles
 
-* Lors de la construction des règles, pour un même type d'objets, c'est
-le dernier aspect de règle qui prime. Pourtant, la règle réellement
-appliquée dépend d'un sens de priorité. WIN l'emporte sur KILL, qui
-l'emporte sur SINK. Il serait donc intéressant d'implémenter une version plus
-déterministe de la construction des règles.
+* L'application des règles dépend de l'ordre interne à la map les contenant,
+ordre qui n'est pas garanti. Ce serait mieux de le rendre plus déterministe.
 
 * L'utilisation d'une multimap étant beaucoup plus obscure que prévu,
 il serait intéressant d'envisager de refactoriser le code pour utiliser
@@ -109,12 +117,16 @@ config.properties comme vu en ATLG4.
 * Le code pourrait être factorisé un peu plus.
 
 * L'affichage de plusieurs éléments sur une même position est non déterministe.
-L'état du jeu que reçoit la vue est construit en itérant dans la map contenant
-les éléments du jeu. Rien ne garantit l'ordre dans lequel se trouveront les éléments
-au sein d'une position. Ainsi, des objets ayant moins d'importance pour le joueur
-se retrouveraient cachés. On pourrait coder en dur une priorité dans la vue...
-ou s'assurer que la vue graphique ait des sprites transparents, ce qui réglerait
-le problème.
+Nous affichons à une certaine position le dernier élément apparaissant à celle-ci,
+mais rien ne garantit que l'ordre dans lequel se trouveront les éléments
+au sein d'une position est le même que leur ordre d'apparition. Ainsi, des objets 
+ayant moins d'importance pour le joueur pourraient se retrouver cachés.
+On pourrait coder en dur une priorité dans la vue... ou s'assurer que la vue
+graphique ait des sprites transparents, ce qui réglerait le problème.
+
+* L'adjonction des niveaux à l'exécutable se fait via une règle CMAKE. Cette façon
+de faire fonctionne, mais pourrait être améliorée, notamment en passant par
+l'outil de ressources Qt.
 
 ## Auteurs
 
