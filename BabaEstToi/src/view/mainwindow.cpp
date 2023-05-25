@@ -3,6 +3,7 @@
 #include <QPixmap>
 #include <QGraphicsPixmapItem>
 #include <QKeyEvent>
+#include <QMessageBox>
 
 int MainWindow::TILE_SIZE {24};
 
@@ -110,7 +111,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         baba_.save();
         break;
     case Qt::Key_L:
-        baba_.load();
+        try {
+            baba_.load();
+        } catch (...) {
+            QMessageBox::critical(this, tr("Error"), tr("No save found"));
+        }
         break;
     case Qt::Key_Escape:
         QApplication::quit();
