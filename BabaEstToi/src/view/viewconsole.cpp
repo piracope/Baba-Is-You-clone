@@ -1,4 +1,4 @@
-#include "view.h"
+#include "viewconsole.h"
 #include <iostream>
 #include <sstream>
 #include <cstring>

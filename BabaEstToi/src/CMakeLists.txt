@@ -22,8 +22,8 @@ add_executable(BabaEstToi
     observer/observer.h
     observer/subject.h
     observer/subject.cpp
-    view/view.h
-    view/view.cpp
+    view/viewconsole.h
+    view/viewconsole.cpp
     controller/consolecontroller.h
     controller/consolecontroller.cpp
     controller/guicontroller.h

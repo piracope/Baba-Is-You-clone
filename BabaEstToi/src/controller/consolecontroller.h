@@ -2,7 +2,7 @@
 #define CONTROLLER_H
 
 #include "../model/baba.h"
-#include "../view/view.h"
+#include "../view/viewconsole.h"
 
 namespace controller
 {
