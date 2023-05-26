@@ -85,7 +85,7 @@ void MainWindow::load()
 
 const QPixmap& MainWindow::getSprite(const model::ObjectType type)
 {
-    const static QPixmap spritesheet {"sprites/spritesheet.png"};
+    const static QPixmap spritesheet {":/resource/sprites/spritesheet.png"};
 
     using enum model::ObjectType;
 
@@ -165,7 +165,11 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         baba_.save();
         break;
     case Qt::Key_L:
-        baba_.load();
+        try {
+            baba_.load();
+        } catch (...) {
+            QMessageBox::critical(this, tr("Error"), tr("No save found"));
+        }
         break;
     case Qt::Key_Escape:
         QApplication::quit();

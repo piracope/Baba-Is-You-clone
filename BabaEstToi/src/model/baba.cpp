@@ -2,6 +2,7 @@
 
 #include "baba.h"
 #include "filemanager.h"
+#include <iostream>
 
 namespace model
 {
