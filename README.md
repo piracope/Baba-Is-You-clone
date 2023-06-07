@@ -130,5 +130,7 @@ l'outil de ressources Qt.
 
 ## Auteurs
 
-* Ayoub Moufidi (58089)
-* Zeki Ozkara (58143)
+* Ayoub Moufidi
+* Zeki Ozkara
+
+Projet conçu dans le cadre de mes études à l'
